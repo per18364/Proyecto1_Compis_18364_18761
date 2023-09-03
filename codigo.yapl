@@ -1,0 +1,17 @@
+class Animal inherits Object {
+    int age;
+    string name;
+    
+    int bark() {
+        if (age < 10) {
+            return 0;
+        } else {
+            return 1;
+        }
+        fi
+    }
+    
+    int getAge() {
+        return age;
+    }
+}
