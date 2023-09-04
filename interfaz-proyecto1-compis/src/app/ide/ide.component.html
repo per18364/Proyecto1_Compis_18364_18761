@@ -1,5 +1,15 @@
-<textarea [(ngModel)]="code" rows="20" cols="60"></textarea>
-<button (click)="analyze()">Analyze</button>
+<div class="title">
+  <h1>Construcción de Compilador YAPL</h1>
+  <h2>Análisis Semántico</h2>
+  <h4>Jorge Pérez, 18364</h4>
+  <h4>Diego Ruiz, 18671</h4>
+</div>
+<div class="container">
+  <textarea [(ngModel)]="code" rows="35" wrap="off" (keydown)="handleKeyEvent($event)"></textarea>
+  <div class="submit">
+    <button (click)="analyze()">Analyze</button>
+  </div>
+</div>
 
 <div *ngIf="result">
   <pre>{{ result | json }}</pre>

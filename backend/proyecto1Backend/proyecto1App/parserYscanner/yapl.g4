@@ -14,6 +14,7 @@ MULT: '*';
 DIV: '/';
 EQ: '==';
 LT: '<';
+GT: '>';
 
 // Program
 program: classDeclaration* EOF;
@@ -81,6 +82,7 @@ expression:
 	| expression DIV expression							# divisionExpression
 	| expression EQ expression							# equalityExpression
 	| expression LT expression							# lessThanExpression
+	| expression GT expression							# greaterThanExpression
 	| expression DOT ID LPAREN expressionList? RPAREN	# methodCallExpression
 	| NOT expression									# notExpression
 	| MINUS expression									# unaryMinusExpression

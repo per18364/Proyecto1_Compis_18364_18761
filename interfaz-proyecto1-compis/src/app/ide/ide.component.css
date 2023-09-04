@@ -1,4 +1,107 @@
+/* .title {
+  text-align: center;
+  font-family: monospace;
+}
+.container {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
 pre {
   text-wrap: wrap;
   width: 100%;
+}
+textarea {
+  resize: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+} */
+body {
+  font-family: Arial, sans-serif; /* Usamos Arial como tipo de letra principal */
+  background-color: #f3f4f6; /* Un fondo suave */
+  padding: 20px; /* Espacio alrededor del cuerpo para que no se sienta tan ajustado */
+}
+
+.title {
+  text-align: center;
+  font-family: monospace;
+  background-color: #2f3136;
+  color: #f3f4f6;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.title h1 {
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 2px solid #444;
+}
+
+.title h2 {
+  margin: 15px 0;
+  color: #ddd;
+}
+
+.title h4 {
+  margin: 10px 0;
+  color: #bbb;
+}
+
+.container {
+  margin-top: 30px;
+  display: block; /* Cambiado de inline-block a block para que tome el ancho completo */
+  width: 100%;
+  text-align: center;
+}
+
+textarea {
+  resize: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 95%; /* Reducido para un poco de margen */
+  height: 400px; /* Asignado un alto fijo */
+  margin: 20px 0;
+  padding: 15px;
+  font-family: monospace;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.submit {
+  margin-top: 10px;
+}
+
+button {
+  background-color: #007bff;
+  color: #f3f4f6;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #0056b3; /* Un poco más oscuro al pasar el ratón */
+}
+
+pre {
+  text-wrap: wrap;
+  width: 100%;
+  padding: 20px;
+  background-color: #e5e5e5;
+  border-radius: 5px;
+  color: #333;
+}
+
+iframe {
+  border: none;
+  margin-top: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }

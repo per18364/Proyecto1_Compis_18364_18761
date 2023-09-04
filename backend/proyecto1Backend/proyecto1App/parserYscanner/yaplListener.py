@@ -206,6 +206,15 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#greaterThanExpression.
+    def enterGreaterThanExpression(self, ctx:yaplParser.GreaterThanExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#greaterThanExpression.
+    def exitGreaterThanExpression(self, ctx:yaplParser.GreaterThanExpressionContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#stringLiteralExpression.
     def enterStringLiteralExpression(self, ctx:yaplParser.StringLiteralExpressionContext):
         pass

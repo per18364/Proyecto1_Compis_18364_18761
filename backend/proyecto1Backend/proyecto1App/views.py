@@ -163,16 +163,15 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
             my_listener = MyListener()
             walker = ParseTreeWalker()
             walker.walk(my_listener, tree)
-
+            visualize_tree(
+                tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
             if errorListener.errors:
-                visualize_tree(
-                    tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
+                # visualize_tree(
+                #     tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
                 return Response({'errors': errorListener.errors}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 tree_str = tree.toStringTree(recog=parser)
                 # tree = parse_tree(tree_str)
-                visualize_tree(
-                    tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
                 return Response({'tree': tree_str, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

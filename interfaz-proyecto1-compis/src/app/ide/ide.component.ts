@@ -13,6 +13,22 @@ export class IdeComponent {
 
   constructor(private analysisService: AnalysisService) {}
 
+  handleKeyEvent(event: KeyboardEvent) {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      const start = (event.target as HTMLTextAreaElement).selectionStart;
+      const end = (event.target as HTMLTextAreaElement).selectionEnd;
+      const target = (event.target as HTMLTextAreaElement).value;
+
+      (event.target as HTMLTextAreaElement).value =
+        target.substring(0, start) + '\t' + target.substring(end);
+
+      (event.target as HTMLTextAreaElement).selectionStart = (
+        event.target as HTMLTextAreaElement
+      ).selectionEnd = start + 1;
+    }
+  }
+
   analyze() {
     this.analysisService.analyzeCode(this.code).subscribe(
       (data) => {
