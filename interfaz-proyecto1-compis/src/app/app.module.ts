@@ -7,9 +7,10 @@ import { IdeComponent } from './ide/ide.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AnalysisService } from './services/analysis.service';
+import { SafeUrlPipe } from './safe-url.pipe';
 
 @NgModule({
-  declarations: [AppComponent, IdeComponent],
+  declarations: [AppComponent, IdeComponent, SafeUrlPipe],
   imports: [
     BrowserModule,
     AppRoutingModule,

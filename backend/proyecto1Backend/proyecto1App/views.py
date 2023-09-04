@@ -8,6 +8,23 @@ from .parserYscanner.yaplListener import yaplListener
 from antlr4 import *
 from antlr4 import InputStream, CommonTokenStream
 from antlr4.error.ErrorListener import ErrorListener
+from graphviz import Digraph
+
+
+def visualize_tree(tree, filename):
+    graph = Digraph(comment='YAPL Syntax Tree')
+    build_graph(tree, graph)
+    graph.render(filename, view=False)
+
+
+def build_graph(tree, graph, parent=None):
+    if tree.getText():
+        node = str(hash(tree))
+        graph.node(node, tree.getText())
+        if parent:
+            graph.edge(parent, node)
+        for i in range(tree.getChildCount()):
+            build_graph(tree.getChild(i), graph, node)
 
 
 class CustomErrorListener(ErrorListener):
@@ -91,6 +108,33 @@ class MyListener(yaplListener):
         self.symbol_table.declare(symbol, type_text)
 
 
+# def parse_tree(tree_str):
+#     tokens = tree_str.split()
+#     stack = []
+#     current_node = {}
+
+#     for token in tokens:
+#         if token == '(':
+#             new_node = {}
+#             stack.append(current_node)
+#             current_node = new_node
+#         elif token == ')':
+#             last_node = stack.pop()
+#             if not last_node:
+#                 return current_node  # Raíz del árbol
+#             parent_key = list(last_node.keys())[-1]
+#             if isinstance(last_node[parent_key], dict):
+#                 if "children" not in last_node[parent_key]:
+#                     last_node[parent_key]['children'] = []
+#                 last_node[parent_key]['children'].append(current_node)
+#             current_node = last_node
+#         else:
+#             if token not in current_node:
+#                 current_node[token] = {}
+
+#     return current_node
+
+
 class AnalyzeCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Code
@@ -119,12 +163,17 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
             my_listener = MyListener()
             walker = ParseTreeWalker()
             walker.walk(my_listener, tree)
+
             if errorListener.errors:
+                visualize_tree(
+                    tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
                 return Response({'errors': errorListener.errors}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 tree_str = tree.toStringTree(recog=parser)
-                tree_list = tree_str.split("\n")
-                return Response({'tree': tree_list, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
+                # tree = parse_tree(tree_str)
+                visualize_tree(
+                    tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
+                return Response({'tree': tree_str, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
