@@ -1,0 +1,131 @@
+from rest_framework import serializers, viewsets, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import Code
+from .parserYscanner.yaplLexer import yaplLexer
+from .parserYscanner.yaplParser import yaplParser
+from .parserYscanner.yaplListener import yaplListener
+from antlr4 import *
+from antlr4 import InputStream, CommonTokenStream
+from antlr4.error.ErrorListener import ErrorListener
+
+
+class CustomErrorListener(ErrorListener):
+    def __init__(self):
+        self.errors = []
+
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        # Personalizar el mensaje de error para el análisis sintáctico
+        self.errors.append(
+            f"\nERROR sintáctico en línea {line}, columna {column}: {msg}\n")
+
+    def reportError(self, recognizer, e):
+        # Personalizar el mensaje de error para el análisis léxico
+        token = recognizer.getCurrentToken()
+        line = token.line
+        column = token.column
+        self.errors.append(
+            f"\nERROR léxico en línea {line}, columna {column}: Carácter inesperado '{token.text}'\n")
+
+
+class SymbolTable:
+    def __init__(self):
+        self.scopes = [{}]
+
+    def enter_scope(self):
+        self.scopes.append({})
+
+    def exit_scope(self):
+        self.scopes.pop()
+
+    def declare(self, symbol, type):
+        self.scopes[-1][symbol] = type
+
+    def lookup(self, symbol):
+        for scope in reversed(self.scopes):
+            if symbol in scope:
+                return scope[symbol]
+        return None
+
+
+class MyListener(yaplListener):
+    def __init__(self):
+        self.symbol_table = SymbolTable()
+
+    def enterClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
+        print("Entrando en ClassDeclaration")
+        class_name = ctx.TYPE_ID()[0].getText()
+        self.symbol_table.declare(class_name, "class")
+        self.symbol_table.enter_scope()  # Nuevo ámbito para la clase
+
+    def exitClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
+        print("Saliendo de ClassDeclaration")
+        # self.symbol_table.exit_scope()  # Salir del ámbito de la clase
+
+    def enterMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
+        print("Entrando en MethodDeclaration")
+        method_name = ctx.ID().getText()
+        # Esto devuelve el texto del tipo
+        method_type = ctx.getChild(0).getText()
+        self.symbol_table.declare(method_name, "method: " + method_type)
+        self.symbol_table.enter_scope()  # Nuevo ámbito para el método
+
+    def exitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
+        print("Saliendo de MethodDeclaration")
+        self.symbol_table.exit_scope()  # Salir del ámbito del método
+
+    def enterBlock(self, ctx: yaplParser.BlockContext):
+        print("Entrando en Block")
+        self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
+
+    def exitBlock(self, ctx: yaplParser.BlockContext):
+        print("Saliendo de Block")
+        self.symbol_table.exit_scope()  # Salir del ámbito del bloque
+
+    def enterAttributeDeclaration(self, ctx: yaplParser.AttributeDeclarationContext):
+        print("Entrando en AttributeDeclaration")
+        symbol = ctx.ID().getText()
+        # Esto devuelve el primer hijo, que debe ser el contexto de 'type'
+        type_ctx = ctx.getChild(0)
+        type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
+        self.symbol_table.declare(symbol, type_text)
+
+
+class AnalyzeCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Code
+        fields = ['code']
+
+
+class AnalyzeCodeViewSet(viewsets.ViewSet):
+
+    def create(self, request):
+        serializer = AnalyzeCodeSerializer(data=request.data)
+        if serializer.is_valid():
+            input_stream = InputStream(serializer.data['code'])
+            lexer = yaplLexer(input_stream)
+            stream = CommonTokenStream(lexer)
+            parser = yaplParser(stream)
+
+            # Asignar el manejador de errores personalizado al analizador léxico y sintáctico
+            errorListener = CustomErrorListener()
+            lexer.removeErrorListeners()
+            lexer.addErrorListener(errorListener)
+            parser = yaplParser(stream)
+            parser.removeErrorListeners()
+            parser.addErrorListener(errorListener)
+
+            tree = parser.program()
+            my_listener = MyListener()
+            walker = ParseTreeWalker()
+            walker.walk(my_listener, tree)
+            if errorListener.errors:
+                return Response({'errors': errorListener.errors}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                tree_str = tree.toStringTree(recog=parser)
+                tree_list = tree_str.split("\n")
+                return Response({'tree': tree_list, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Create your views here.

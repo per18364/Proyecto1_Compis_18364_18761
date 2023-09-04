@@ -5,6 +5,7 @@ from yaplListener import yaplListener
 from antlr4.tree.Trees import Trees
 from antlr4.error.ErrorListener import ErrorListener
 from graphviz import Digraph
+import os
 
 
 def visualize_tree(tree, filename):
@@ -44,6 +45,7 @@ class yaplListener(ParseTreeListener):
     def exitExpression(self, ctx: yaplParser.ExpressionContext):
         print("Saliendo de expresión:", ctx.getText())
 
+
 class SymbolTable:
     def __init__(self):
         self.scopes = [{}]
@@ -62,45 +64,47 @@ class SymbolTable:
             if symbol in scope:
                 return scope[symbol]
         return None
-    
+
 
 class MyListener(yaplListener):
     def __init__(self):
         self.symbol_table = SymbolTable()
 
-    def enterClassDeclaration(self, ctx:yaplParser.ClassDeclarationContext):
-        print("Entrando en ClassDeclaration")  
+    def enterClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
+        print("Entrando en ClassDeclaration")
         class_name = ctx.TYPE_ID()[0].getText()
         self.symbol_table.declare(class_name, "class")
         self.symbol_table.enter_scope()  # Nuevo ámbito para la clase
 
-    def exitClassDeclaration(self, ctx:yaplParser.ClassDeclarationContext):
+    def exitClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
         print("Saliendo de ClassDeclaration")
         # self.symbol_table.exit_scope()  # Salir del ámbito de la clase
 
-    def enterMethodDeclaration(self, ctx:yaplParser.MethodDeclarationContext):
+    def enterMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Entrando en MethodDeclaration")
         method_name = ctx.ID().getText()
-        method_type = ctx.getChild(0).getText()  # Esto devuelve el texto del tipo
+        # Esto devuelve el texto del tipo
+        method_type = ctx.getChild(0).getText()
         self.symbol_table.declare(method_name, "method: " + method_type)
         self.symbol_table.enter_scope()  # Nuevo ámbito para el método
 
-    def exitMethodDeclaration(self, ctx:yaplParser.MethodDeclarationContext):
+    def exitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Saliendo de MethodDeclaration")
         self.symbol_table.exit_scope()  # Salir del ámbito del método
 
-    def enterBlock(self, ctx:yaplParser.BlockContext):
+    def enterBlock(self, ctx: yaplParser.BlockContext):
         print("Entrando en Block")
         self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
 
-    def exitBlock(self, ctx:yaplParser.BlockContext):
+    def exitBlock(self, ctx: yaplParser.BlockContext):
         print("Saliendo de Block")
         self.symbol_table.exit_scope()  # Salir del ámbito del bloque
 
-    def enterAttributeDeclaration(self, ctx:yaplParser.AttributeDeclarationContext):
+    def enterAttributeDeclaration(self, ctx: yaplParser.AttributeDeclarationContext):
         print("Entrando en AttributeDeclaration")
         symbol = ctx.ID().getText()
-        type_ctx = ctx.getChild(0)  # Esto devuelve el primer hijo, que debe ser el contexto de 'type'
+        # Esto devuelve el primer hijo, que debe ser el contexto de 'type'
+        type_ctx = ctx.getChild(0)
         type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
         self.symbol_table.declare(symbol, type_text)
 
@@ -108,8 +112,12 @@ class MyListener(yaplListener):
 def main():
     # Lee el código fuente de YAPL desde un archivo o un string
     # input_stream = FileStream("codigo.yapl")
-    with open("codigo.yapl", "r", encoding="utf-8") as file:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(script_dir, 'codigo.yapl')
+    with open(file_path, 'r', encoding='utf-8') as file:
         input_text = file.read()
+    # with open("codigo.yapl", "r", encoding="utf-8") as file:
+    #     input_text = file.read()
     input_stream = InputStream(input_text)
 
     lexer = yaplLexer(input_stream)
@@ -134,8 +142,8 @@ def main():
     # yl = yaplListener()
     # walker = ParseTreeWalker()
     # walker.walk(yl, tree)
-    
-    #crear tabla de simbolos
+
+    # crear tabla de simbolos
     my_listener = MyListener()
     walker = ParseTreeWalker()
     walker.walk(my_listener, tree)

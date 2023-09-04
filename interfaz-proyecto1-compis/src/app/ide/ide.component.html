@@ -1,0 +1,6 @@
+<textarea [(ngModel)]="code" rows="20" cols="60"></textarea>
+<button (click)="analyze()">Analyze</button>
+
+<div *ngIf="result">
+  <pre>{{ result | json }}</pre>
+</div>
