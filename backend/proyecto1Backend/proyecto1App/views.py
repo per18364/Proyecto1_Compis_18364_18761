@@ -33,16 +33,16 @@ class CustomErrorListener(ErrorListener):
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         # Personalizar el mensaje de error para el análisis sintáctico
-        self.errors.append(
-            f"\nERROR sintáctico en línea {line}, columna {column}: {msg}\n")
+        if isinstance(recognizer, yaplLexer):
+            self.errors.append(
+                f"\nERROR léxico en línea {line}, columna {column}: Carácter inesperado '{msg}'\n")
+        else:
+            self.errors.append(
+                f"\nERROR sintáctico en línea {line}, columna {column}: {msg}\n")
 
-    def reportError(self, recognizer, e):
-        # Personalizar el mensaje de error para el análisis léxico
-        token = recognizer.getCurrentToken()
-        line = token.line
-        column = token.column
+    def semanticError(self, line, column, msg):
         self.errors.append(
-            f"\nERROR léxico en línea {line}, columna {column}: Carácter inesperado '{token.text}'\n")
+            f"\nERROR semántico en línea {line}, columna {column}: {msg}\n")
 
 
 class SymbolTable:
