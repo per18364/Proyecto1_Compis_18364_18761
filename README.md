@@ -11,70 +11,66 @@ Este proyecto combina el poder de Angular.js para el frontend y Django para el b
 
 ## Project Structure
 
-- `/frontend` - Contains the Angular.js frontend code.
-- `/backend` - Contains the Django backend code.
+- `/frontend` - Contiene el código de la interfaz de usuario con el framework Angular.js.
+- `/backend` - Contiene el código del servidor con el framework Django.
 
 ## Prerequisites
 
 1. Python 3.x
-2. Node.js and npm
-3. Virtualenv (Optional, but recommended)
+2. Node.js y npm
+3. Virtualenv (Opcional, pero recomendado)
 
-## Setup & Installation
+## Setup e instalación
 
 ### Backend (Django)
 
-1. Navigate to the `backend` directory:
+1. Navegar al directorio `backend`:
 
    ```bash
    cd backend
    ```
 
-2. (Optional) Set up a virtual environment:
+2. (Opcional) Set up el entorno virtual:
 
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   source venv/bin/activate  # En Windows se usa `venv\Scripts\activate`
    ```
 
-3. Install the required packages:
+3. Instalar los requerimientos:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Run the Django migrations:
+4. Correr las migraciones de Django:
 
    ```bash
    python manage.py migrate
    ```
 
-5. Start the Django server:
+5. Iniciar el servidor de desarrollo de Django:
    ```bash
    python manage.py runserver
    ```
 
 ### Frontend (Angular.js)
 
-1. Navigate to the `frontend` directory:
+1. Navegar al directorio `frontend`:
 
    ```bash
    cd frontend
    ```
 
-2. Install the necessary node modules:
+2. Instalar los modulos de Node.js:
 
    ```bash
    npm install
    ```
 
-3. Start the Angular development server:
+3. iniciar el servidor de desarrollo de Angular.js:
    ```bash
    ng serve
    ```
 
-Now, you should be able to access the frontend at `http://localhost:4200/` and the backend API at `http://localhost:8000/`.
-
-## Contributing
-
-Feel free to submit issues and pull requests, they are always welcome!
+Ahora, deberías poder acceder al frontend en `http://localhost:4200/` y al backend en `http://localhost:8000/`.
