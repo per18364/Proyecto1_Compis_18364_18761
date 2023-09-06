@@ -35,6 +35,8 @@ class CustomErrorListener(ErrorListener):
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         # Personalizar el mensaje de error para el análisis sintáctico
+        # print(msg)
+        # print(offendingSymbol.text)
         if isinstance(recognizer, yaplLexer):
             err = msg.split("'")[1]
             self.errors.append(
@@ -62,6 +64,7 @@ class SymbolTable:
             print("Warning: Trying to exit the global scope!")
 
     def declare(self, symbol, type, line=None, column=None):
+        # print(self.scopes)
         if symbol in self.scopes[-1]:
             print(
                 f"Simbolo {symbol} ya fue declarado en la linea {line}, columna {column}")
@@ -123,6 +126,15 @@ class MyListener(yaplListener):
         print("\nEntrando en ClassDeclaration")
         class_name = ctx.TYPE_ID()[0].getText()
         self.declareSymbol(ctx, class_name, "class")
+        if len(ctx.TYPE_ID()) > 1:
+            inherits = ctx.TYPE_ID()[1].getText()
+            print(inherits)
+            if self.symbol_table.is_declared(inherits):
+                print(f"{inherits} es una clase")
+            else:
+                print(f"{inherits} no es una clase")
+                self.error_listener.errors.append(
+                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> {inherits} no es una clase declarada.")
         self.symbol_table.enter_scope()  # Nuevo ámbito para la clase
 
     def exitClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
@@ -134,7 +146,8 @@ class MyListener(yaplListener):
         method_name = ctx.ID().getText()
         # Esto devuelve el texto del tipo
         method_type = ctx.getChild(0).getText()
-        self.declareSymbol(ctx, method_name, "method: " + method_type)
+        self.declareSymbol(ctx, method_name, "method: " +
+                           method_type)
         self.symbol_table.enter_scope()  # Nuevo ámbito para el método
 
     def exitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
@@ -151,22 +164,22 @@ class MyListener(yaplListener):
         print("Saliendo de Block")
         self.inside_block = False
         self.block_depth -= 1
-        # self.symbol_table.exit_scope()  # Salir del ámbito del bloque
+        self.symbol_table.exit_scope()  # Salir del ámbito del bloque
 
     def enterVariableDeclaration(self, ctx: yaplParser.VariableDeclarationContext):
-        # if self.block_depth > 0:  # Solo si estamos dentro de un bloque
-        print("Declaración de variable dentro de un bloque")
-        symbol = ctx.ID().getText()
-        # print(symbol)
-        type_ctx = ctx.getChild(0)
-        type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
-        self.declareSymbol(ctx, symbol, type_text)
-        self.symbol_table.enter_scope()  # Nuevo ámbito para la variable
+        if self.block_depth > 0:  # Solo si estamos dentro de un bloque
+            print("Declaración de variable dentro de un bloque")
+            symbol = ctx.ID().getText()
+            # print(symbol)
+            type_ctx = ctx.getChild(0)
+            type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
+            self.declareSymbol(ctx, symbol, type_text)
+        # self.symbol_table.enter_scope()  # Nuevo ámbito para la variable
 
     def exitVariableDeclaration(self, ctx: yaplParser.VariableDeclarationContext):
         if self.block_depth > 0:  # Solo si estamos dentro de un bloque
-            print("Saliendo de VariableDeclaration")
-            # self.symbol_table.exit_scope()
+            print("Saliendo de  VariableDeclaration")
+        # self.symbol_table.exit_scope()
 
     def enterAttributeDeclaration(self, ctx: yaplParser.AttributeDeclarationContext):
         print("Entrando en AttributeDeclaration")
@@ -175,7 +188,17 @@ class MyListener(yaplListener):
         type_ctx = ctx.getChild(0)
         type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
         self.declareSymbol(ctx, symbol, type_text)
-        self.symbol_table.enter_scope()  # Nuevo ámbito para el atributo
+        # self.symbol_table.enter_scope()  # Nuevo ámbito para el atributo
+
+    def exitAttributeDeclaration(self, ctx: yaplParser.AttributeDeclarationContext):
+        print("Saliendo de AttributeDeclaration")
+    #     self.symbol_table.exit_scope()
+
+    def enterAssignmentDeclaration(self, ctx: yaplParser.AssignmentDeclarationContext):
+        print("Entrando en AssignmentDeclaration")
+        symbol = ctx.ID().getText()
+        self.accessSymbol(ctx, symbol)
+        self.symbol_table.enter_scope()  # Nuevo ámbito para la asignación
 
     def enterIfStatement(self, ctx: yaplParser.IfStatementContext):
         print("Entrando en IfStatement")
@@ -220,7 +243,19 @@ class MyListener(yaplListener):
                 else:
                     self.error_listener.errors.append(
                         f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variable} que no ha sido declarado en esa instancia.")
-
+        elif re.search(r'[\=\>\<\!]', expression.getText()):
+            variables = re.split(r'[\=\>\<\!]', expression.getText())
+            print("variables", variables)
+            for variable in variables:
+                if variable == "true" or variable == "false":
+                    print("valor booleano")
+                elif self.symbol_table.is_declared(variable):
+                    print(
+                        f"variable {variable} is declared as {self.symbol_table.lookup(variable)['tipo']}")
+                    # check if both variables are the same type
+                else:
+                    self.error_listener.errors.append(
+                        f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variable} que no ha sido declarado en esa instancia.")
         # check if ctx.getText() is a variable that has been declared
         elif not self.symbol_table.is_declared(expression.getText()):
             self.error_listener.errors.append(

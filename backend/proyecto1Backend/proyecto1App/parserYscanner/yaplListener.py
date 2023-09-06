@@ -44,6 +44,15 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#assignmentDeclaration.
+    def enterAssignmentDeclaration(self, ctx:yaplParser.AssignmentDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#assignmentDeclaration.
+    def exitAssignmentDeclaration(self, ctx:yaplParser.AssignmentDeclarationContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#type.
     def enterType(self, ctx:yaplParser.TypeContext):
         pass
@@ -86,15 +95,6 @@ class yaplListener(ParseTreeListener):
 
     # Exit a parse tree produced by yaplParser#statement.
     def exitStatement(self, ctx:yaplParser.StatementContext):
-        pass
-
-
-    # Enter a parse tree produced by yaplParser#assignmentStatement.
-    def enterAssignmentStatement(self, ctx:yaplParser.AssignmentStatementContext):
-        pass
-
-    # Exit a parse tree produced by yaplParser#assignmentStatement.
-    def exitAssignmentStatement(self, ctx:yaplParser.AssignmentStatementContext):
         pass
 
 
@@ -179,6 +179,15 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#lessThanOrEqualExpression.
+    def enterLessThanOrEqualExpression(self, ctx:yaplParser.LessThanOrEqualExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#lessThanOrEqualExpression.
+    def exitLessThanOrEqualExpression(self, ctx:yaplParser.LessThanOrEqualExpressionContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#newExpression.
     def enterNewExpression(self, ctx:yaplParser.NewExpressionContext):
         pass
@@ -206,6 +215,15 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#assignmentExpression.
+    def enterAssignmentExpression(self, ctx:yaplParser.AssignmentExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#assignmentExpression.
+    def exitAssignmentExpression(self, ctx:yaplParser.AssignmentExpressionContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#notExpression.
     def enterNotExpression(self, ctx:yaplParser.NotExpressionContext):
         pass
@@ -224,12 +242,30 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#notEqualExpression.
+    def enterNotEqualExpression(self, ctx:yaplParser.NotEqualExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#notEqualExpression.
+    def exitNotEqualExpression(self, ctx:yaplParser.NotEqualExpressionContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#greaterThanExpression.
     def enterGreaterThanExpression(self, ctx:yaplParser.GreaterThanExpressionContext):
         pass
 
     # Exit a parse tree produced by yaplParser#greaterThanExpression.
     def exitGreaterThanExpression(self, ctx:yaplParser.GreaterThanExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by yaplParser#greaterThanOrEqualExpression.
+    def enterGreaterThanOrEqualExpression(self, ctx:yaplParser.GreaterThanOrEqualExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#greaterThanOrEqualExpression.
+    def exitGreaterThanOrEqualExpression(self, ctx:yaplParser.GreaterThanOrEqualExpressionContext):
         pass
 
 
@@ -242,12 +278,30 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#orExpression.
+    def enterOrExpression(self, ctx:yaplParser.OrExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#orExpression.
+    def exitOrExpression(self, ctx:yaplParser.OrExpressionContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#unaryMinusExpression.
     def enterUnaryMinusExpression(self, ctx:yaplParser.UnaryMinusExpressionContext):
         pass
 
     # Exit a parse tree produced by yaplParser#unaryMinusExpression.
     def exitUnaryMinusExpression(self, ctx:yaplParser.UnaryMinusExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by yaplParser#andExpression.
+    def enterAndExpression(self, ctx:yaplParser.AndExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#andExpression.
+    def exitAndExpression(self, ctx:yaplParser.AndExpressionContext):
         pass
 
 

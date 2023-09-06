@@ -1,9 +1,13 @@
-class Animal inherits Object {
+class Animal {
     int age;
     string name;
+    int hair;
+    age = 5;
     
     int bark() {
         if (age < 10) {
+            bool beso;
+            age + 30;
             return 0;
         } else {
             return 1;
@@ -13,5 +17,21 @@ class Animal inherits Object {
     
     int getAge() {
         return age;
+    }
+}
+
+class Human inherits Animal{
+    int hands;
+    bool evolved;
+    evolved = true;
+
+    while (evolved != false){
+        hands + 1;
+        if (hair == 50) {
+            evolved = true;
+        } else {
+            evolved = false;
+        }
+        fi
     }
 }

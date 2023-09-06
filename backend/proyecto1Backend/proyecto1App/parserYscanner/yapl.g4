@@ -29,10 +29,18 @@ classDeclaration:
 	CLASS TYPE_ID (INHERITS TYPE_ID)? LBRACE classBody RBRACE;
 
 // Class Body
-classBody: (attributeDeclaration | methodDeclaration)*;
+classBody: (
+		attributeDeclaration
+		| methodDeclaration
+		| assignmentDeclaration
+		| statement
+	)*;
 
 // Attribute Declaration
 attributeDeclaration: type ID SEMI;
+
+// Assignment Declaration
+assignmentDeclaration: ID EQUALS expression SEMI;
 
 // Types
 type: INT | STRING_TYPE | TYPE_ID | BOOL;
@@ -46,8 +54,8 @@ parameter: type ID;
 
 // Statement
 statement:
-	assignmentStatement
-	| variableDeclaration
+	// assignmentStatement
+	variableDeclaration
 	| ifStatement
 	| whileStatement
 	| methodCallStatement
@@ -55,8 +63,7 @@ statement:
 	| returnStatement
 	| block;
 
-// Assignment Statement
-assignmentStatement: ID EQUALS expression SEMI;
+// Assignment Statement assignmentStatement: ID EQUALS expression SEMI;
 
 // Variable Declaration
 variableDeclaration: type ID (EQUALS expression)? SEMI;
@@ -92,6 +99,12 @@ expression:
 	| expression EQ expression							# equalityExpression
 	| expression LT expression							# lessThanExpression
 	| expression GT expression							# greaterThanExpression
+	| expression LT_EQ expression						# lessThanOrEqualExpression
+	| expression GT_EQ expression						# greaterThanOrEqualExpression
+	| expression NEQ expression							# notEqualExpression
+	| expression EQUALS expression						# assignmentExpression
+	| expression AND expression							# andExpression
+	| expression OR expression							# orExpression
 	| expression DOT ID LPAREN expressionList? RPAREN	# methodCallExpression
 	| NEW TYPE_ID										# newExpression
 	| NOT expression									# notExpression
