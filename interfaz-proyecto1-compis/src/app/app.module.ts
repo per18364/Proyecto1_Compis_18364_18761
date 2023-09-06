@@ -8,9 +8,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AnalysisService } from './services/analysis.service';
 import { SafeUrlPipe } from './safe-url.pipe';
+import { RemoveEscapePipe } from './remove-escape.pipe';
 
 @NgModule({
-  declarations: [AppComponent, IdeComponent, SafeUrlPipe],
+  declarations: [AppComponent, IdeComponent, SafeUrlPipe, RemoveEscapePipe],
   imports: [
     BrowserModule,
     AppRoutingModule,

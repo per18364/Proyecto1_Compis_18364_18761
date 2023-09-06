@@ -12,6 +12,9 @@
 </div>
 
 <div *ngIf="result">
-  <pre>{{ result | json }}</pre>
-  <iframe [src]="pdfUrl | safeUrl" width="100%" height="500px"></iframe>
+  <pre *ngIf="result.tree"> {{result | json}} </pre>
+  <div *ngIf="result.errors">
+    <pre *ngFor="let err of result.errors"> {{err}} </pre>
+  </div>
+  <iframe title="Arbol de Análisis Sintáctico" [src]="pdfUrl | safeUrl" width="100%" height="500px"></iframe>
 </div>

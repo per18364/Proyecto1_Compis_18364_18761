@@ -21,11 +21,11 @@ export class IdeComponent {
       const target = (event.target as HTMLTextAreaElement).value;
 
       (event.target as HTMLTextAreaElement).value =
-        target.substring(0, start) + '\t' + target.substring(end);
+        target.substring(0, start) + '    ' + target.substring(end);
 
       (event.target as HTMLTextAreaElement).selectionStart = (
         event.target as HTMLTextAreaElement
-      ).selectionEnd = start + 1;
+      ).selectionEnd = start + 4;
     }
   }
 
@@ -34,10 +34,12 @@ export class IdeComponent {
       (data) => {
         // console.log(data);
         this.result = data;
+        console.log('result', this.result);
       },
       (error) => {
         // console.log('Error', error);
-        this.result = error.error.errors;
+        this.result = error.error;
+        console.log('result', this.result);
       }
     );
     const time = new Date().getTime();

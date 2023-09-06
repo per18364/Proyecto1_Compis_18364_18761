@@ -17,22 +17,24 @@ public class yaplParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		LBRACE=1, RBRACE=2, LPAREN=3, RPAREN=4, SEMI=5, COMMA=6, EQUALS=7, PLUS=8, 
-		MINUS=9, MULT=10, DIV=11, EQ=12, LT=13, GT=14, TRUE=15, DOT=16, FALSE=17, 
-		CLASS=18, INHERITS=19, SELF=20, SELF_TYPE=21, ELSE=22, FI=23, IF=24, WHILE=25, 
-		NEW=26, ISVOID=27, NOT=28, RETURN=29, INT=30, STRING_TYPE=31, ID=32, TYPE_ID=33, 
-		INTEGER=34, STRING=35, COMMENT=36, WS=37;
+		MINUS=9, MULT=10, DIV=11, EQ=12, NEQ=13, LT=14, GT=15, GT_EQ=16, LT_EQ=17, 
+		AND=18, OR=19, TRUE=20, DOT=21, FALSE=22, CLASS=23, INHERITS=24, SELF=25, 
+		SELF_TYPE=26, ELSE=27, FI=28, IF=29, WHILE=30, NEW=31, ISVOID=32, NOT=33, 
+		RETURN=34, INT=35, STRING_TYPE=36, BOOL=37, ID=38, TYPE_ID=39, INTEGER=40, 
+		STRING=41, COMMENT=42, WS=43;
 	public static final int
 		RULE_program = 0, RULE_classDeclaration = 1, RULE_classBody = 2, RULE_attributeDeclaration = 3, 
 		RULE_type = 4, RULE_methodDeclaration = 5, RULE_parameterList = 6, RULE_parameter = 7, 
-		RULE_block = 8, RULE_statement = 9, RULE_assignmentStatement = 10, RULE_variableDeclaration = 11, 
-		RULE_ifStatement = 12, RULE_whileStatement = 13, RULE_methodCallStatement = 14, 
-		RULE_returnStatement = 15, RULE_expressionList = 16, RULE_expression = 17;
+		RULE_statement = 8, RULE_assignmentStatement = 9, RULE_variableDeclaration = 10, 
+		RULE_ifStatement = 11, RULE_whileStatement = 12, RULE_methodCallStatement = 13, 
+		RULE_returnStatement = 14, RULE_expressionList = 15, RULE_block = 16, 
+		RULE_expression = 17;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"program", "classDeclaration", "classBody", "attributeDeclaration", "type", 
-			"methodDeclaration", "parameterList", "parameter", "block", "statement", 
-			"assignmentStatement", "variableDeclaration", "ifStatement", "whileStatement", 
-			"methodCallStatement", "returnStatement", "expressionList", "expression"
+			"methodDeclaration", "parameterList", "parameter", "statement", "assignmentStatement", 
+			"variableDeclaration", "ifStatement", "whileStatement", "methodCallStatement", 
+			"returnStatement", "expressionList", "block", "expression"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -40,19 +42,21 @@ public class yaplParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'{'", "'}'", "'('", "')'", "';'", "','", "'='", "'+'", "'-'", 
-			"'*'", "'/'", "'=='", "'<'", "'>'", "'true'", "'.'", "'false'", "'class'", 
-			"'inherits'", "'self'", "'SELF_TYPE'", "'else'", "'fi'", "'if'", "'while'", 
-			"'new'", "'isvoid'", "'not'", "'return'", "'int'", "'string'"
+			"'*'", "'/'", "'=='", "'!='", "'<'", "'>'", "'>='", "'<='", "'&&'", "'||'", 
+			"'true'", "'.'", "'false'", "'class'", "'inherits'", "'self'", "'SELF_TYPE'", 
+			"'else'", "'fi'", "'if'", "'while'", "'new'", "'isvoid'", "'not'", "'return'", 
+			"'int'", "'string'", "'bool'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, "LBRACE", "RBRACE", "LPAREN", "RPAREN", "SEMI", "COMMA", "EQUALS", 
-			"PLUS", "MINUS", "MULT", "DIV", "EQ", "LT", "GT", "TRUE", "DOT", "FALSE", 
-			"CLASS", "INHERITS", "SELF", "SELF_TYPE", "ELSE", "FI", "IF", "WHILE", 
-			"NEW", "ISVOID", "NOT", "RETURN", "INT", "STRING_TYPE", "ID", "TYPE_ID", 
-			"INTEGER", "STRING", "COMMENT", "WS"
+			"PLUS", "MINUS", "MULT", "DIV", "EQ", "NEQ", "LT", "GT", "GT_EQ", "LT_EQ", 
+			"AND", "OR", "TRUE", "DOT", "FALSE", "CLASS", "INHERITS", "SELF", "SELF_TYPE", 
+			"ELSE", "FI", "IF", "WHILE", "NEW", "ISVOID", "NOT", "RETURN", "INT", 
+			"STRING_TYPE", "BOOL", "ID", "TYPE_ID", "INTEGER", "STRING", "COMMENT", 
+			"WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -245,7 +249,7 @@ public class yaplParser extends Parser {
 			setState(58);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << TYPE_ID))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << TYPE_ID))) != 0)) {
 				{
 				setState(56);
 				_errHandler.sync(this);
@@ -322,6 +326,7 @@ public class yaplParser extends Parser {
 		public TerminalNode INT() { return getToken(yaplParser.INT, 0); }
 		public TerminalNode STRING_TYPE() { return getToken(yaplParser.STRING_TYPE, 0); }
 		public TerminalNode TYPE_ID() { return getToken(yaplParser.TYPE_ID, 0); }
+		public TerminalNode BOOL() { return getToken(yaplParser.BOOL, 0); }
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -337,7 +342,7 @@ public class yaplParser extends Parser {
 			{
 			setState(65);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << TYPE_ID))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << TYPE_ID))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -393,7 +398,7 @@ public class yaplParser extends Parser {
 			setState(71);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << TYPE_ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << TYPE_ID))) != 0)) {
 				{
 				setState(70);
 				parameterList();
@@ -506,59 +511,6 @@ public class yaplParser extends Parser {
 		return _localctx;
 	}
 
-	public static class BlockContext extends ParserRuleContext {
-		public TerminalNode LBRACE() { return getToken(yaplParser.LBRACE, 0); }
-		public TerminalNode RBRACE() { return getToken(yaplParser.RBRACE, 0); }
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
-		public StatementContext statement(int i) {
-			return getRuleContext(StatementContext.class,i);
-		}
-		public BlockContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_block; }
-	}
-
-	public final BlockContext block() throws RecognitionException {
-		BlockContext _localctx = new BlockContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_block);
-		int _la;
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(87);
-			match(LBRACE);
-			setState(91);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LBRACE) | (1L << IF) | (1L << WHILE) | (1L << RETURN) | (1L << INT) | (1L << STRING_TYPE) | (1L << ID) | (1L << TYPE_ID))) != 0)) {
-				{
-				{
-				setState(88);
-				statement();
-				}
-				}
-				setState(93);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-			}
-			setState(94);
-			match(RBRACE);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
 	public static class StatementContext extends ParserRuleContext {
 		public AssignmentStatementContext assignmentStatement() {
 			return getRuleContext(AssignmentStatementContext.class,0);
@@ -578,6 +530,10 @@ public class yaplParser extends Parser {
 		public ReturnStatementContext returnStatement() {
 			return getRuleContext(ReturnStatementContext.class,0);
 		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public TerminalNode SEMI() { return getToken(yaplParser.SEMI, 0); }
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
@@ -589,57 +545,66 @@ public class yaplParser extends Parser {
 
 	public final StatementContext statement() throws RecognitionException {
 		StatementContext _localctx = new StatementContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_statement);
+		enterRule(_localctx, 16, RULE_statement);
 		try {
-			setState(103);
+			setState(97);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(96);
+				setState(87);
 				assignmentStatement();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(97);
+				setState(88);
 				variableDeclaration();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(98);
+				setState(89);
 				ifStatement();
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(99);
+				setState(90);
 				whileStatement();
 				}
 				break;
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(100);
+				setState(91);
 				methodCallStatement();
 				}
 				break;
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(101);
+				setState(92);
 				returnStatement();
 				}
 				break;
 			case 7:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(102);
+				setState(93);
+				expression(0);
+				setState(94);
+				match(SEMI);
+				}
+				break;
+			case 8:
+				enterOuterAlt(_localctx, 8);
+				{
+				setState(96);
 				block();
 				}
 				break;
@@ -671,17 +636,17 @@ public class yaplParser extends Parser {
 
 	public final AssignmentStatementContext assignmentStatement() throws RecognitionException {
 		AssignmentStatementContext _localctx = new AssignmentStatementContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_assignmentStatement);
+		enterRule(_localctx, 18, RULE_assignmentStatement);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(105);
+			setState(99);
 			match(ID);
-			setState(106);
+			setState(100);
 			match(EQUALS);
-			setState(107);
+			setState(101);
 			expression(0);
-			setState(108);
+			setState(102);
 			match(SEMI);
 			}
 		}
@@ -714,28 +679,28 @@ public class yaplParser extends Parser {
 
 	public final VariableDeclarationContext variableDeclaration() throws RecognitionException {
 		VariableDeclarationContext _localctx = new VariableDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_variableDeclaration);
+		enterRule(_localctx, 20, RULE_variableDeclaration);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(110);
+			setState(104);
 			type();
-			setState(111);
+			setState(105);
 			match(ID);
-			setState(114);
+			setState(108);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==EQUALS) {
 				{
-				setState(112);
+				setState(106);
 				match(EQUALS);
-				setState(113);
+				setState(107);
 				expression(0);
 				}
 			}
 
-			setState(116);
+			setState(110);
 			match(SEMI);
 			}
 		}
@@ -773,34 +738,34 @@ public class yaplParser extends Parser {
 
 	public final IfStatementContext ifStatement() throws RecognitionException {
 		IfStatementContext _localctx = new IfStatementContext(_ctx, getState());
-		enterRule(_localctx, 24, RULE_ifStatement);
+		enterRule(_localctx, 22, RULE_ifStatement);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(118);
+			setState(112);
 			match(IF);
-			setState(119);
+			setState(113);
 			match(LPAREN);
-			setState(120);
+			setState(114);
 			expression(0);
-			setState(121);
+			setState(115);
 			match(RPAREN);
-			setState(122);
+			setState(116);
 			statement();
-			setState(125);
+			setState(119);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ELSE) {
 				{
-				setState(123);
+				setState(117);
 				match(ELSE);
-				setState(124);
+				setState(118);
 				statement();
 				}
 			}
 
-			setState(127);
+			setState(121);
 			match(FI);
 			}
 		}
@@ -833,19 +798,19 @@ public class yaplParser extends Parser {
 
 	public final WhileStatementContext whileStatement() throws RecognitionException {
 		WhileStatementContext _localctx = new WhileStatementContext(_ctx, getState());
-		enterRule(_localctx, 26, RULE_whileStatement);
+		enterRule(_localctx, 24, RULE_whileStatement);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(129);
+			setState(123);
 			match(WHILE);
-			setState(130);
+			setState(124);
 			match(LPAREN);
-			setState(131);
+			setState(125);
 			expression(0);
-			setState(132);
+			setState(126);
 			match(RPAREN);
-			setState(133);
+			setState(127);
 			statement();
 			}
 		}
@@ -876,28 +841,28 @@ public class yaplParser extends Parser {
 
 	public final MethodCallStatementContext methodCallStatement() throws RecognitionException {
 		MethodCallStatementContext _localctx = new MethodCallStatementContext(_ctx, getState());
-		enterRule(_localctx, 28, RULE_methodCallStatement);
+		enterRule(_localctx, 26, RULE_methodCallStatement);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(135);
+			setState(129);
 			match(ID);
-			setState(136);
+			setState(130);
 			match(LPAREN);
-			setState(138);
+			setState(132);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAREN) | (1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << NOT) | (1L << ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << NEW) | (1L << NOT) | (1L << ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
 				{
-				setState(137);
+				setState(131);
 				expressionList();
 				}
 			}
 
-			setState(140);
+			setState(134);
 			match(RPAREN);
-			setState(141);
+			setState(135);
 			match(SEMI);
 			}
 		}
@@ -926,24 +891,24 @@ public class yaplParser extends Parser {
 
 	public final ReturnStatementContext returnStatement() throws RecognitionException {
 		ReturnStatementContext _localctx = new ReturnStatementContext(_ctx, getState());
-		enterRule(_localctx, 30, RULE_returnStatement);
+		enterRule(_localctx, 28, RULE_returnStatement);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(143);
+			setState(137);
 			match(RETURN);
-			setState(145);
+			setState(139);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAREN) | (1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << NOT) | (1L << ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << NEW) | (1L << NOT) | (1L << ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
 				{
-				setState(144);
+				setState(138);
 				expression(0);
 				}
 			}
 
-			setState(147);
+			setState(141);
 			match(SEMI);
 			}
 		}
@@ -977,29 +942,82 @@ public class yaplParser extends Parser {
 
 	public final ExpressionListContext expressionList() throws RecognitionException {
 		ExpressionListContext _localctx = new ExpressionListContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_expressionList);
+		enterRule(_localctx, 30, RULE_expressionList);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(149);
+			setState(143);
 			expression(0);
-			setState(154);
+			setState(148);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(150);
+				setState(144);
 				match(COMMA);
-				setState(151);
+				setState(145);
 				expression(0);
 				}
 				}
-				setState(156);
+				setState(150);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class BlockContext extends ParserRuleContext {
+		public TerminalNode LBRACE() { return getToken(yaplParser.LBRACE, 0); }
+		public TerminalNode RBRACE() { return getToken(yaplParser.RBRACE, 0); }
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
+		}
+		public BlockContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_block; }
+	}
+
+	public final BlockContext block() throws RecognitionException {
+		BlockContext _localctx = new BlockContext(_ctx, getState());
+		enterRule(_localctx, 32, RULE_block);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(151);
+			match(LBRACE);
+			setState(155);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LBRACE) | (1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << WHILE) | (1L << NEW) | (1L << NOT) | (1L << RETURN) | (1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << ID) | (1L << TYPE_ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+				{
+				{
+				setState(152);
+				statement();
+				}
+				}
+				setState(157);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			setState(158);
+			match(RBRACE);
 			}
 		}
 		catch (RecognitionException re) {
@@ -1033,6 +1051,11 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode PLUS() { return getToken(yaplParser.PLUS, 0); }
 		public AdditionExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+	}
+	public static class NewExpressionContext extends ExpressionContext {
+		public TerminalNode NEW() { return getToken(yaplParser.NEW, 0); }
+		public TerminalNode TYPE_ID() { return getToken(yaplParser.TYPE_ID, 0); }
+		public NewExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
 	}
 	public static class IdentifierExpressionContext extends ExpressionContext {
 		public TerminalNode ID() { return getToken(yaplParser.ID, 0); }
@@ -1088,14 +1111,6 @@ public class yaplParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public UnaryMinusExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-	}
-	public static class ParenthesizedExpressionContext extends ExpressionContext {
-		public TerminalNode LPAREN() { return getToken(yaplParser.LPAREN, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode RPAREN() { return getToken(yaplParser.RPAREN, 0); }
-		public ParenthesizedExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
 	}
 	public static class TrueLiteralExpressionContext extends ExpressionContext {
 		public TerminalNode TRUE() { return getToken(yaplParser.TRUE, 0); }
@@ -1166,116 +1181,114 @@ public class yaplParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(177);
+			setState(178);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,14,_ctx) ) {
 			case 1:
 				{
-				_localctx = new NotExpressionContext(_localctx);
+				_localctx = new NewExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(158);
-				match(NOT);
-				setState(159);
-				expression(9);
+				setState(161);
+				match(NEW);
+				setState(162);
+				match(TYPE_ID);
 				}
 				break;
 			case 2:
 				{
-				_localctx = new UnaryMinusExpressionContext(_localctx);
+				_localctx = new NotExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(160);
-				match(MINUS);
-				setState(161);
+				setState(163);
+				match(NOT);
+				setState(164);
 				expression(8);
 				}
 				break;
 			case 3:
 				{
-				_localctx = new MethodCallExpressionContext(_localctx);
+				_localctx = new UnaryMinusExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(162);
-				match(ID);
-				setState(163);
-				match(LPAREN);
 				setState(165);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAREN) | (1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << NOT) | (1L << ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
-					{
-					setState(164);
-					expressionList();
-					}
-				}
-
-				setState(167);
-				match(RPAREN);
+				match(MINUS);
+				setState(166);
+				expression(7);
 				}
 				break;
 			case 4:
 				{
-				_localctx = new IdentifierExpressionContext(_localctx);
+				_localctx = new MethodCallExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(168);
+				setState(167);
 				match(ID);
+				setState(168);
+				match(LPAREN);
+				setState(170);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << NEW) | (1L << NOT) | (1L << ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+					{
+					setState(169);
+					expressionList();
+					}
+				}
+
+				setState(172);
+				match(RPAREN);
 				}
 				break;
 			case 5:
 				{
-				_localctx = new IntegerLiteralExpressionContext(_localctx);
+				_localctx = new IdentifierExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(169);
-				match(INTEGER);
+				setState(173);
+				match(ID);
 				}
 				break;
 			case 6:
 				{
-				_localctx = new StringLiteralExpressionContext(_localctx);
+				_localctx = new IntegerLiteralExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(170);
-				match(STRING);
+				setState(174);
+				match(INTEGER);
 				}
 				break;
 			case 7:
 				{
-				_localctx = new TrueLiteralExpressionContext(_localctx);
+				_localctx = new StringLiteralExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(171);
-				match(TRUE);
+				setState(175);
+				match(STRING);
 				}
 				break;
 			case 8:
 				{
-				_localctx = new FalseLiteralExpressionContext(_localctx);
+				_localctx = new TrueLiteralExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(172);
-				match(FALSE);
+				setState(176);
+				match(TRUE);
 				}
 				break;
 			case 9:
 				{
-				_localctx = new ParenthesizedExpressionContext(_localctx);
+				_localctx = new FalseLiteralExpressionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(173);
-				match(LPAREN);
-				setState(174);
-				expression(0);
-				setState(175);
-				match(RPAREN);
+				setState(177);
+				match(FALSE);
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(210);
+			setState(211);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,17,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -1283,18 +1296,18 @@ public class yaplParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(208);
+					setState(209);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
 					case 1:
 						{
 						_localctx = new AdditionExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(179);
-						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
 						setState(180);
-						match(PLUS);
+						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
 						setState(181);
+						match(PLUS);
+						setState(182);
 						expression(18);
 						}
 						break;
@@ -1302,11 +1315,11 @@ public class yaplParser extends Parser {
 						{
 						_localctx = new SubtractionExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(182);
-						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
 						setState(183);
-						match(MINUS);
+						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
 						setState(184);
+						match(MINUS);
+						setState(185);
 						expression(17);
 						}
 						break;
@@ -1314,11 +1327,11 @@ public class yaplParser extends Parser {
 						{
 						_localctx = new MultiplicationExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(185);
-						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
 						setState(186);
-						match(MULT);
+						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
 						setState(187);
+						match(MULT);
+						setState(188);
 						expression(16);
 						}
 						break;
@@ -1326,11 +1339,11 @@ public class yaplParser extends Parser {
 						{
 						_localctx = new DivisionExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(188);
-						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
 						setState(189);
-						match(DIV);
+						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
 						setState(190);
+						match(DIV);
+						setState(191);
 						expression(15);
 						}
 						break;
@@ -1338,11 +1351,11 @@ public class yaplParser extends Parser {
 						{
 						_localctx = new EqualityExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(191);
-						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
 						setState(192);
-						match(EQ);
+						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
 						setState(193);
+						match(EQ);
+						setState(194);
 						expression(14);
 						}
 						break;
@@ -1350,11 +1363,11 @@ public class yaplParser extends Parser {
 						{
 						_localctx = new LessThanExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(194);
-						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
 						setState(195);
-						match(LT);
+						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
 						setState(196);
+						match(LT);
+						setState(197);
 						expression(13);
 						}
 						break;
@@ -1362,11 +1375,11 @@ public class yaplParser extends Parser {
 						{
 						_localctx = new GreaterThanExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(197);
-						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
 						setState(198);
-						match(GT);
+						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
 						setState(199);
+						match(GT);
+						setState(200);
 						expression(12);
 						}
 						break;
@@ -1374,32 +1387,32 @@ public class yaplParser extends Parser {
 						{
 						_localctx = new MethodCallExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(200);
-						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						setState(201);
-						match(DOT);
+						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						setState(202);
-						match(ID);
+						match(DOT);
 						setState(203);
+						match(ID);
+						setState(204);
 						match(LPAREN);
-						setState(205);
+						setState(206);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
-						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAREN) | (1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << NOT) | (1L << ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << NEW) | (1L << NOT) | (1L << ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
 							{
-							setState(204);
+							setState(205);
 							expressionList();
 							}
 						}
 
-						setState(207);
+						setState(208);
 						match(RPAREN);
 						}
 						break;
 					}
 					} 
 				}
-				setState(212);
+				setState(213);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,17,_ctx);
 			}
@@ -1446,75 +1459,75 @@ public class yaplParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\'\u00d8\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3-\u00d9\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\3\2\7\2(\n\2\f\2\16\2+\13\2\3\2\3\2\3\3\3\3\3\3\3\3\5\3\63"+
 		"\n\3\3\3\3\3\3\3\3\3\3\4\3\4\7\4;\n\4\f\4\16\4>\13\4\3\5\3\5\3\5\3\5\3"+
 		"\6\3\6\3\7\3\7\3\7\3\7\5\7J\n\7\3\7\3\7\3\7\3\b\3\b\3\b\7\bR\n\b\f\b\16"+
-		"\bU\13\b\3\t\3\t\3\t\3\n\3\n\7\n\\\n\n\f\n\16\n_\13\n\3\n\3\n\3\13\3\13"+
-		"\3\13\3\13\3\13\3\13\3\13\5\13j\n\13\3\f\3\f\3\f\3\f\3\f\3\r\3\r\3\r\3"+
-		"\r\5\ru\n\r\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\3\16\5\16\u0080\n\16"+
-		"\3\16\3\16\3\17\3\17\3\17\3\17\3\17\3\17\3\20\3\20\3\20\5\20\u008d\n\20"+
-		"\3\20\3\20\3\20\3\21\3\21\5\21\u0094\n\21\3\21\3\21\3\22\3\22\3\22\7\22"+
-		"\u009b\n\22\f\22\16\22\u009e\13\22\3\23\3\23\3\23\3\23\3\23\3\23\3\23"+
-		"\3\23\5\23\u00a8\n\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23"+
-		"\5\23\u00b4\n\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23"+
+		"\bU\13\b\3\t\3\t\3\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\5\nd\n\n"+
+		"\3\13\3\13\3\13\3\13\3\13\3\f\3\f\3\f\3\f\5\fo\n\f\3\f\3\f\3\r\3\r\3\r"+
+		"\3\r\3\r\3\r\3\r\5\rz\n\r\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\3\17\3"+
+		"\17\3\17\5\17\u0087\n\17\3\17\3\17\3\17\3\20\3\20\5\20\u008e\n\20\3\20"+
+		"\3\20\3\21\3\21\3\21\7\21\u0095\n\21\f\21\16\21\u0098\13\21\3\22\3\22"+
+		"\7\22\u009c\n\22\f\22\16\22\u009f\13\22\3\22\3\22\3\23\3\23\3\23\3\23"+
+		"\3\23\3\23\3\23\3\23\3\23\3\23\5\23\u00ad\n\23\3\23\3\23\3\23\3\23\3\23"+
+		"\3\23\5\23\u00b5\n\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23"+
 		"\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23\3\23"+
-		"\3\23\5\23\u00d0\n\23\3\23\7\23\u00d3\n\23\f\23\16\23\u00d6\13\23\3\23"+
-		"\2\3$\24\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$\2\3\4\2 !##\2\u00e9"+
-		"\2)\3\2\2\2\4.\3\2\2\2\6<\3\2\2\2\b?\3\2\2\2\nC\3\2\2\2\fE\3\2\2\2\16"+
-		"N\3\2\2\2\20V\3\2\2\2\22Y\3\2\2\2\24i\3\2\2\2\26k\3\2\2\2\30p\3\2\2\2"+
-		"\32x\3\2\2\2\34\u0083\3\2\2\2\36\u0089\3\2\2\2 \u0091\3\2\2\2\"\u0097"+
-		"\3\2\2\2$\u00b3\3\2\2\2&(\5\4\3\2\'&\3\2\2\2(+\3\2\2\2)\'\3\2\2\2)*\3"+
-		"\2\2\2*,\3\2\2\2+)\3\2\2\2,-\7\2\2\3-\3\3\2\2\2./\7\24\2\2/\62\7#\2\2"+
-		"\60\61\7\25\2\2\61\63\7#\2\2\62\60\3\2\2\2\62\63\3\2\2\2\63\64\3\2\2\2"+
-		"\64\65\7\3\2\2\65\66\5\6\4\2\66\67\7\4\2\2\67\5\3\2\2\28;\5\b\5\29;\5"+
-		"\f\7\2:8\3\2\2\2:9\3\2\2\2;>\3\2\2\2<:\3\2\2\2<=\3\2\2\2=\7\3\2\2\2><"+
-		"\3\2\2\2?@\5\n\6\2@A\7\"\2\2AB\7\7\2\2B\t\3\2\2\2CD\t\2\2\2D\13\3\2\2"+
-		"\2EF\5\n\6\2FG\7\"\2\2GI\7\5\2\2HJ\5\16\b\2IH\3\2\2\2IJ\3\2\2\2JK\3\2"+
-		"\2\2KL\7\6\2\2LM\5\22\n\2M\r\3\2\2\2NS\5\20\t\2OP\7\b\2\2PR\5\20\t\2Q"+
-		"O\3\2\2\2RU\3\2\2\2SQ\3\2\2\2ST\3\2\2\2T\17\3\2\2\2US\3\2\2\2VW\5\n\6"+
-		"\2WX\7\"\2\2X\21\3\2\2\2Y]\7\3\2\2Z\\\5\24\13\2[Z\3\2\2\2\\_\3\2\2\2]"+
-		"[\3\2\2\2]^\3\2\2\2^`\3\2\2\2_]\3\2\2\2`a\7\4\2\2a\23\3\2\2\2bj\5\26\f"+
-		"\2cj\5\30\r\2dj\5\32\16\2ej\5\34\17\2fj\5\36\20\2gj\5 \21\2hj\5\22\n\2"+
-		"ib\3\2\2\2ic\3\2\2\2id\3\2\2\2ie\3\2\2\2if\3\2\2\2ig\3\2\2\2ih\3\2\2\2"+
-		"j\25\3\2\2\2kl\7\"\2\2lm\7\t\2\2mn\5$\23\2no\7\7\2\2o\27\3\2\2\2pq\5\n"+
-		"\6\2qt\7\"\2\2rs\7\t\2\2su\5$\23\2tr\3\2\2\2tu\3\2\2\2uv\3\2\2\2vw\7\7"+
-		"\2\2w\31\3\2\2\2xy\7\32\2\2yz\7\5\2\2z{\5$\23\2{|\7\6\2\2|\177\5\24\13"+
-		"\2}~\7\30\2\2~\u0080\5\24\13\2\177}\3\2\2\2\177\u0080\3\2\2\2\u0080\u0081"+
-		"\3\2\2\2\u0081\u0082\7\31\2\2\u0082\33\3\2\2\2\u0083\u0084\7\33\2\2\u0084"+
-		"\u0085\7\5\2\2\u0085\u0086\5$\23\2\u0086\u0087\7\6\2\2\u0087\u0088\5\24"+
-		"\13\2\u0088\35\3\2\2\2\u0089\u008a\7\"\2\2\u008a\u008c\7\5\2\2\u008b\u008d"+
-		"\5\"\22\2\u008c\u008b\3\2\2\2\u008c\u008d\3\2\2\2\u008d\u008e\3\2\2\2"+
-		"\u008e\u008f\7\6\2\2\u008f\u0090\7\7\2\2\u0090\37\3\2\2\2\u0091\u0093"+
-		"\7\37\2\2\u0092\u0094\5$\23\2\u0093\u0092\3\2\2\2\u0093\u0094\3\2\2\2"+
-		"\u0094\u0095\3\2\2\2\u0095\u0096\7\7\2\2\u0096!\3\2\2\2\u0097\u009c\5"+
-		"$\23\2\u0098\u0099\7\b\2\2\u0099\u009b\5$\23\2\u009a\u0098\3\2\2\2\u009b"+
-		"\u009e\3\2\2\2\u009c\u009a\3\2\2\2\u009c\u009d\3\2\2\2\u009d#\3\2\2\2"+
-		"\u009e\u009c\3\2\2\2\u009f\u00a0\b\23\1\2\u00a0\u00a1\7\36\2\2\u00a1\u00b4"+
-		"\5$\23\13\u00a2\u00a3\7\13\2\2\u00a3\u00b4\5$\23\n\u00a4\u00a5\7\"\2\2"+
-		"\u00a5\u00a7\7\5\2\2\u00a6\u00a8\5\"\22\2\u00a7\u00a6\3\2\2\2\u00a7\u00a8"+
-		"\3\2\2\2\u00a8\u00a9\3\2\2\2\u00a9\u00b4\7\6\2\2\u00aa\u00b4\7\"\2\2\u00ab"+
-		"\u00b4\7$\2\2\u00ac\u00b4\7%\2\2\u00ad\u00b4\7\21\2\2\u00ae\u00b4\7\23"+
-		"\2\2\u00af\u00b0\7\5\2\2\u00b0\u00b1\5$\23\2\u00b1\u00b2\7\6\2\2\u00b2"+
-		"\u00b4\3\2\2\2\u00b3\u009f\3\2\2\2\u00b3\u00a2\3\2\2\2\u00b3\u00a4\3\2"+
-		"\2\2\u00b3\u00aa\3\2\2\2\u00b3\u00ab\3\2\2\2\u00b3\u00ac\3\2\2\2\u00b3"+
-		"\u00ad\3\2\2\2\u00b3\u00ae\3\2\2\2\u00b3\u00af\3\2\2\2\u00b4\u00d4\3\2"+
-		"\2\2\u00b5\u00b6\f\23\2\2\u00b6\u00b7\7\n\2\2\u00b7\u00d3\5$\23\24\u00b8"+
-		"\u00b9\f\22\2\2\u00b9\u00ba\7\13\2\2\u00ba\u00d3\5$\23\23\u00bb\u00bc"+
-		"\f\21\2\2\u00bc\u00bd\7\f\2\2\u00bd\u00d3\5$\23\22\u00be\u00bf\f\20\2"+
-		"\2\u00bf\u00c0\7\r\2\2\u00c0\u00d3\5$\23\21\u00c1\u00c2\f\17\2\2\u00c2"+
-		"\u00c3\7\16\2\2\u00c3\u00d3\5$\23\20\u00c4\u00c5\f\16\2\2\u00c5\u00c6"+
-		"\7\17\2\2\u00c6\u00d3\5$\23\17\u00c7\u00c8\f\r\2\2\u00c8\u00c9\7\20\2"+
-		"\2\u00c9\u00d3\5$\23\16\u00ca\u00cb\f\f\2\2\u00cb\u00cc\7\22\2\2\u00cc"+
-		"\u00cd\7\"\2\2\u00cd\u00cf\7\5\2\2\u00ce\u00d0\5\"\22\2\u00cf\u00ce\3"+
-		"\2\2\2\u00cf\u00d0\3\2\2\2\u00d0\u00d1\3\2\2\2\u00d1\u00d3\7\6\2\2\u00d2"+
-		"\u00b5\3\2\2\2\u00d2\u00b8\3\2\2\2\u00d2\u00bb\3\2\2\2\u00d2\u00be\3\2"+
-		"\2\2\u00d2\u00c1\3\2\2\2\u00d2\u00c4\3\2\2\2\u00d2\u00c7\3\2\2\2\u00d2"+
-		"\u00ca\3\2\2\2\u00d3\u00d6\3\2\2\2\u00d4\u00d2\3\2\2\2\u00d4\u00d5\3\2"+
-		"\2\2\u00d5%\3\2\2\2\u00d6\u00d4\3\2\2\2\24)\62:<IS]it\177\u008c\u0093"+
-		"\u009c\u00a7\u00b3\u00cf\u00d2\u00d4";
+		"\3\23\3\23\5\23\u00d1\n\23\3\23\7\23\u00d4\n\23\f\23\16\23\u00d7\13\23"+
+		"\3\23\2\3$\24\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$\2\3\4\2%\'))"+
+		"\2\u00eb\2)\3\2\2\2\4.\3\2\2\2\6<\3\2\2\2\b?\3\2\2\2\nC\3\2\2\2\fE\3\2"+
+		"\2\2\16N\3\2\2\2\20V\3\2\2\2\22c\3\2\2\2\24e\3\2\2\2\26j\3\2\2\2\30r\3"+
+		"\2\2\2\32}\3\2\2\2\34\u0083\3\2\2\2\36\u008b\3\2\2\2 \u0091\3\2\2\2\""+
+		"\u0099\3\2\2\2$\u00b4\3\2\2\2&(\5\4\3\2\'&\3\2\2\2(+\3\2\2\2)\'\3\2\2"+
+		"\2)*\3\2\2\2*,\3\2\2\2+)\3\2\2\2,-\7\2\2\3-\3\3\2\2\2./\7\31\2\2/\62\7"+
+		")\2\2\60\61\7\32\2\2\61\63\7)\2\2\62\60\3\2\2\2\62\63\3\2\2\2\63\64\3"+
+		"\2\2\2\64\65\7\3\2\2\65\66\5\6\4\2\66\67\7\4\2\2\67\5\3\2\2\28;\5\b\5"+
+		"\29;\5\f\7\2:8\3\2\2\2:9\3\2\2\2;>\3\2\2\2<:\3\2\2\2<=\3\2\2\2=\7\3\2"+
+		"\2\2><\3\2\2\2?@\5\n\6\2@A\7(\2\2AB\7\7\2\2B\t\3\2\2\2CD\t\2\2\2D\13\3"+
+		"\2\2\2EF\5\n\6\2FG\7(\2\2GI\7\5\2\2HJ\5\16\b\2IH\3\2\2\2IJ\3\2\2\2JK\3"+
+		"\2\2\2KL\7\6\2\2LM\5\"\22\2M\r\3\2\2\2NS\5\20\t\2OP\7\b\2\2PR\5\20\t\2"+
+		"QO\3\2\2\2RU\3\2\2\2SQ\3\2\2\2ST\3\2\2\2T\17\3\2\2\2US\3\2\2\2VW\5\n\6"+
+		"\2WX\7(\2\2X\21\3\2\2\2Yd\5\24\13\2Zd\5\26\f\2[d\5\30\r\2\\d\5\32\16\2"+
+		"]d\5\34\17\2^d\5\36\20\2_`\5$\23\2`a\7\7\2\2ad\3\2\2\2bd\5\"\22\2cY\3"+
+		"\2\2\2cZ\3\2\2\2c[\3\2\2\2c\\\3\2\2\2c]\3\2\2\2c^\3\2\2\2c_\3\2\2\2cb"+
+		"\3\2\2\2d\23\3\2\2\2ef\7(\2\2fg\7\t\2\2gh\5$\23\2hi\7\7\2\2i\25\3\2\2"+
+		"\2jk\5\n\6\2kn\7(\2\2lm\7\t\2\2mo\5$\23\2nl\3\2\2\2no\3\2\2\2op\3\2\2"+
+		"\2pq\7\7\2\2q\27\3\2\2\2rs\7\37\2\2st\7\5\2\2tu\5$\23\2uv\7\6\2\2vy\5"+
+		"\22\n\2wx\7\35\2\2xz\5\22\n\2yw\3\2\2\2yz\3\2\2\2z{\3\2\2\2{|\7\36\2\2"+
+		"|\31\3\2\2\2}~\7 \2\2~\177\7\5\2\2\177\u0080\5$\23\2\u0080\u0081\7\6\2"+
+		"\2\u0081\u0082\5\22\n\2\u0082\33\3\2\2\2\u0083\u0084\7(\2\2\u0084\u0086"+
+		"\7\5\2\2\u0085\u0087\5 \21\2\u0086\u0085\3\2\2\2\u0086\u0087\3\2\2\2\u0087"+
+		"\u0088\3\2\2\2\u0088\u0089\7\6\2\2\u0089\u008a\7\7\2\2\u008a\35\3\2\2"+
+		"\2\u008b\u008d\7$\2\2\u008c\u008e\5$\23\2\u008d\u008c\3\2\2\2\u008d\u008e"+
+		"\3\2\2\2\u008e\u008f\3\2\2\2\u008f\u0090\7\7\2\2\u0090\37\3\2\2\2\u0091"+
+		"\u0096\5$\23\2\u0092\u0093\7\b\2\2\u0093\u0095\5$\23\2\u0094\u0092\3\2"+
+		"\2\2\u0095\u0098\3\2\2\2\u0096\u0094\3\2\2\2\u0096\u0097\3\2\2\2\u0097"+
+		"!\3\2\2\2\u0098\u0096\3\2\2\2\u0099\u009d\7\3\2\2\u009a\u009c\5\22\n\2"+
+		"\u009b\u009a\3\2\2\2\u009c\u009f\3\2\2\2\u009d\u009b\3\2\2\2\u009d\u009e"+
+		"\3\2\2\2\u009e\u00a0\3\2\2\2\u009f\u009d\3\2\2\2\u00a0\u00a1\7\4\2\2\u00a1"+
+		"#\3\2\2\2\u00a2\u00a3\b\23\1\2\u00a3\u00a4\7!\2\2\u00a4\u00b5\7)\2\2\u00a5"+
+		"\u00a6\7#\2\2\u00a6\u00b5\5$\23\n\u00a7\u00a8\7\13\2\2\u00a8\u00b5\5$"+
+		"\23\t\u00a9\u00aa\7(\2\2\u00aa\u00ac\7\5\2\2\u00ab\u00ad\5 \21\2\u00ac"+
+		"\u00ab\3\2\2\2\u00ac\u00ad\3\2\2\2\u00ad\u00ae\3\2\2\2\u00ae\u00b5\7\6"+
+		"\2\2\u00af\u00b5\7(\2\2\u00b0\u00b5\7*\2\2\u00b1\u00b5\7+\2\2\u00b2\u00b5"+
+		"\7\26\2\2\u00b3\u00b5\7\30\2\2\u00b4\u00a2\3\2\2\2\u00b4\u00a5\3\2\2\2"+
+		"\u00b4\u00a7\3\2\2\2\u00b4\u00a9\3\2\2\2\u00b4\u00af\3\2\2\2\u00b4\u00b0"+
+		"\3\2\2\2\u00b4\u00b1\3\2\2\2\u00b4\u00b2\3\2\2\2\u00b4\u00b3\3\2\2\2\u00b5"+
+		"\u00d5\3\2\2\2\u00b6\u00b7\f\23\2\2\u00b7\u00b8\7\n\2\2\u00b8\u00d4\5"+
+		"$\23\24\u00b9\u00ba\f\22\2\2\u00ba\u00bb\7\13\2\2\u00bb\u00d4\5$\23\23"+
+		"\u00bc\u00bd\f\21\2\2\u00bd\u00be\7\f\2\2\u00be\u00d4\5$\23\22\u00bf\u00c0"+
+		"\f\20\2\2\u00c0\u00c1\7\r\2\2\u00c1\u00d4\5$\23\21\u00c2\u00c3\f\17\2"+
+		"\2\u00c3\u00c4\7\16\2\2\u00c4\u00d4\5$\23\20\u00c5\u00c6\f\16\2\2\u00c6"+
+		"\u00c7\7\20\2\2\u00c7\u00d4\5$\23\17\u00c8\u00c9\f\r\2\2\u00c9\u00ca\7"+
+		"\21\2\2\u00ca\u00d4\5$\23\16\u00cb\u00cc\f\f\2\2\u00cc\u00cd\7\27\2\2"+
+		"\u00cd\u00ce\7(\2\2\u00ce\u00d0\7\5\2\2\u00cf\u00d1\5 \21\2\u00d0\u00cf"+
+		"\3\2\2\2\u00d0\u00d1\3\2\2\2\u00d1\u00d2\3\2\2\2\u00d2\u00d4\7\6\2\2\u00d3"+
+		"\u00b6\3\2\2\2\u00d3\u00b9\3\2\2\2\u00d3\u00bc\3\2\2\2\u00d3\u00bf\3\2"+
+		"\2\2\u00d3\u00c2\3\2\2\2\u00d3\u00c5\3\2\2\2\u00d3\u00c8\3\2\2\2\u00d3"+
+		"\u00cb\3\2\2\2\u00d4\u00d7\3\2\2\2\u00d5\u00d3\3\2\2\2\u00d5\u00d6\3\2"+
+		"\2\2\u00d6%\3\2\2\2\u00d7\u00d5\3\2\2\2\24)\62:<IScny\u0086\u008d\u0096"+
+		"\u009d\u00ac\u00b4\u00d0\u00d3\u00d5";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

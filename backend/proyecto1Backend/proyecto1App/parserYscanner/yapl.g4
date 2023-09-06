@@ -13,8 +13,13 @@ MINUS: '-';
 MULT: '*';
 DIV: '/';
 EQ: '==';
+NEQ: '!=';
 LT: '<';
 GT: '>';
+GT_EQ: '>=';
+LT_EQ: '<=';
+AND: '&&';
+OR: '||';
 
 // Program
 program: classDeclaration* EOF;
@@ -30,7 +35,7 @@ classBody: (attributeDeclaration | methodDeclaration)*;
 attributeDeclaration: type ID SEMI;
 
 // Types
-type: INT | STRING_TYPE | TYPE_ID;
+type: INT | STRING_TYPE | TYPE_ID | BOOL;
 
 // Method Declaration
 methodDeclaration: type ID LPAREN parameterList? RPAREN block;
@@ -38,9 +43,6 @@ methodDeclaration: type ID LPAREN parameterList? RPAREN block;
 // Parameter List
 parameterList: parameter (COMMA parameter)*;
 parameter: type ID;
-
-// Block
-block: LBRACE statement* RBRACE;
 
 // Statement
 statement:
@@ -50,6 +52,7 @@ statement:
 	| whileStatement
 	| methodCallStatement
 	| returnStatement
+	| expression SEMI
 	| block;
 
 // Assignment Statement
@@ -74,6 +77,9 @@ returnStatement: RETURN expression? SEMI;
 // Expression List
 expressionList: expression (COMMA expression)*;
 
+// Block
+block: LBRACE statement* RBRACE;
+
 // Expressions
 expression:
 	expression PLUS expression							# additionExpression
@@ -84,6 +90,7 @@ expression:
 	| expression LT expression							# lessThanExpression
 	| expression GT expression							# greaterThanExpression
 	| expression DOT ID LPAREN expressionList? RPAREN	# methodCallExpression
+	| NEW TYPE_ID										# newExpression
 	| NOT expression									# notExpression
 	| MINUS expression									# unaryMinusExpression
 	| ID LPAREN expressionList? RPAREN					# methodCallExpression
@@ -91,8 +98,7 @@ expression:
 	| INTEGER											# integerLiteralExpression
 	| STRING											# stringLiteralExpression
 	| TRUE												# trueLiteralExpression
-	| FALSE												# falseLiteralExpression
-	| LPAREN expression RPAREN							# parenthesizedExpression;
+	| FALSE												# falseLiteralExpression;
 
 // Reserved Words
 TRUE: 'true';
@@ -112,6 +118,7 @@ NOT: 'not';
 RETURN: 'return';
 INT: 'int';
 STRING_TYPE: 'string';
+BOOL: 'bool';
 
 // Lexical Specifications
 ID: [a-z][a-zA-Z0-9_]*;

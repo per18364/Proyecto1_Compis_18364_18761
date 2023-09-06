@@ -1,4 +1,4 @@
-# Generated from yapl.g4 by ANTLR 4.13.0
+# Generated from yapl.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .yaplParser import yaplParser
@@ -80,15 +80,6 @@ class yaplListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by yaplParser#block.
-    def enterBlock(self, ctx:yaplParser.BlockContext):
-        pass
-
-    # Exit a parse tree produced by yaplParser#block.
-    def exitBlock(self, ctx:yaplParser.BlockContext):
-        pass
-
-
     # Enter a parse tree produced by yaplParser#statement.
     def enterStatement(self, ctx:yaplParser.StatementContext):
         pass
@@ -161,12 +152,30 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#block.
+    def enterBlock(self, ctx:yaplParser.BlockContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#block.
+    def exitBlock(self, ctx:yaplParser.BlockContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#additionExpression.
     def enterAdditionExpression(self, ctx:yaplParser.AdditionExpressionContext):
         pass
 
     # Exit a parse tree produced by yaplParser#additionExpression.
     def exitAdditionExpression(self, ctx:yaplParser.AdditionExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by yaplParser#newExpression.
+    def enterNewExpression(self, ctx:yaplParser.NewExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#newExpression.
+    def exitNewExpression(self, ctx:yaplParser.NewExpressionContext):
         pass
 
 
@@ -230,15 +239,6 @@ class yaplListener(ParseTreeListener):
 
     # Exit a parse tree produced by yaplParser#unaryMinusExpression.
     def exitUnaryMinusExpression(self, ctx:yaplParser.UnaryMinusExpressionContext):
-        pass
-
-
-    # Enter a parse tree produced by yaplParser#parenthesizedExpression.
-    def enterParenthesizedExpression(self, ctx:yaplParser.ParenthesizedExpressionContext):
-        pass
-
-    # Exit a parse tree produced by yaplParser#parenthesizedExpression.
-    def exitParenthesizedExpression(self, ctx:yaplParser.ParenthesizedExpressionContext):
         pass
 
 
