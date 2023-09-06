@@ -9,6 +9,7 @@ from antlr4 import *
 from antlr4 import InputStream, CommonTokenStream
 from antlr4.error.ErrorListener import ErrorListener
 from graphviz import Digraph
+import re
 
 
 def visualize_tree(tree, filename):
@@ -108,7 +109,7 @@ class MyListener(yaplListener):
             print(f"Verificando que {symbol} ha sido declarado")
             if not self.symbol_table.is_declared(symbol, current_scope_only=True):
                 self.error_listener.errors.append(
-                    f"ERROR semántico en línea {line}:{column}. Uso de {symbol} que no ha sido declarado.")
+                    f"ERROR semántico en línea {line}:{column} -> Uso de {symbol} que no ha sido declarado.")
 
     def accessSymbol(self, ctx, symbol):
         """Maneja el acceso a símbolos, ya sea para uso o para asignación."""
@@ -116,7 +117,7 @@ class MyListener(yaplListener):
         column = ctx.start.column
         if not self.symbol_table.is_declared(symbol):
             self.error_listener.errors.append(
-                f"ERROR semántico en línea {line}:{column}. Uso de {symbol} que no ha sido declarado.")
+                f"ERROR semántico en línea {line}:{column} -> Uso de {symbol} que no ha sido declarado.")
 
     def enterClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
         print("\nEntrando en ClassDeclaration")
@@ -156,6 +157,7 @@ class MyListener(yaplListener):
         # if self.block_depth > 0:  # Solo si estamos dentro de un bloque
         print("Declaración de variable dentro de un bloque")
         symbol = ctx.ID().getText()
+        # print(symbol)
         type_ctx = ctx.getChild(0)
         type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
         self.declareSymbol(ctx, symbol, type_text)
@@ -174,6 +176,60 @@ class MyListener(yaplListener):
         type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
         self.declareSymbol(ctx, symbol, type_text)
         self.symbol_table.enter_scope()  # Nuevo ámbito para el atributo
+
+    def enterIfStatement(self, ctx: yaplParser.IfStatementContext):
+        print("Entrando en IfStatement")
+        # block
+        self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
+
+    # def exitIfStatement(self, ctx: yaplParser.IfStatementContext):
+    #     print("Saliendo de IfStatement")
+    #     self.symbol_table.exit_scope()  # Salir del ámbito del bloque
+
+    def enterWhileStatement(self, ctx: yaplParser.WhileStatementContext):
+        print("Entrando en WhileStatement")
+        self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
+
+    # def exitWhileStatement(self, ctx: yaplParser.WhileStatementContext):
+    #     print("Saliendo de WhileStatement")
+    #     self.symbol_table.exit_scope()
+
+    def enterExpressionStatement(self, ctx: yaplParser.ExpressionStatementContext):
+        print("Entrando en ExpressionStatement")
+        expression = ctx.expression()
+        print("exp2", expression.getText())
+        # check if expression.getText() has either +, -, *, /
+        if re.search(r'[\+\-\*\/]', expression.getText()):
+            variables = re.split(r'[\+\-\*\/]', expression.getText())
+            print("variables", variables)
+            for variable in variables:
+                # check if variable is a number
+                if variable.isnumeric() or variable.isdecimal():
+                    print(f"variable {variable} is a number")
+                elif (variable.startswith('"') and variable.endswith('"')):
+                    # if both variables are strings then it's ok only if it's a +
+                    self.error_listener.errors.append(
+                        f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variables[0]} y {variables[1]} deben ser de tipo <int> o un numero.")
+                elif self.symbol_table.is_declared(variable):
+                    print(
+                        f"variable {variable} is declared as {self.symbol_table.lookup(variable)['tipo']}")
+                    # check if both variables are the same type
+                    if self.symbol_table.lookup(variable)['tipo'] != self.symbol_table.lookup(variables[0])['tipo']:
+                        self.error_listener.errors.append(
+                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variable} es de tipo <{self.symbol_table.lookup(variable)['tipo']}> y {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}>")
+                else:
+                    self.error_listener.errors.append(
+                        f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variable} que no ha sido declarado en esa instancia.")
+
+        # check if ctx.getText() is a variable that has been declared
+        elif not self.symbol_table.is_declared(expression.getText()):
+            self.error_listener.errors.append(
+                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {expression.getText()} que no ha sido declarado.")
+        self.symbol_table.enter_scope()
+
+    def exitExpressionStatement(self, ctx: yaplParser.ExpressionStatementContext):
+        print("Saliendo de ExpressionStatement")
+        self.symbol_table.exit_scope()
 
 
 class AnalyzeCodeSerializer(serializers.ModelSerializer):

@@ -134,6 +134,15 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#expressionStatement.
+    def enterExpressionStatement(self, ctx:yaplParser.ExpressionStatementContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#expressionStatement.
+    def exitExpressionStatement(self, ctx:yaplParser.ExpressionStatementContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#returnStatement.
     def enterReturnStatement(self, ctx:yaplParser.ReturnStatementContext):
         pass

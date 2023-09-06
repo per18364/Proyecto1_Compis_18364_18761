@@ -51,8 +51,8 @@ statement:
 	| ifStatement
 	| whileStatement
 	| methodCallStatement
+	| expressionStatement
 	| returnStatement
-	| expression SEMI
 	| block;
 
 // Assignment Statement
@@ -70,6 +70,9 @@ whileStatement: WHILE LPAREN expression RPAREN statement;
 
 // Method Call Statement
 methodCallStatement: ID LPAREN expressionList? RPAREN SEMI;
+
+// Expression Statement
+expressionStatement: expression SEMI;
 
 // Return Statement
 returnStatement: RETURN expression? SEMI;
