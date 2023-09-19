@@ -36,12 +36,25 @@ body {
   text-align: center;
 }
 
+.textarea-container {
+  display: flex;
+  position: relative;
+  height: 440px;
+}
+
+.line-numbers {
+  padding-top: 16px; /* Ajusta según la altura de la primera línea del textarea */
+  margin-top: 20px;
+  overflow: hidden;
+  height: 380px;
+}
+
 textarea {
   resize: none;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  width: 95%; /*Reducido para un poco de margen*/
+  width: 100%; /*Reducido para un poco de margen*/
   height: 400px; /* Asignado un alto fijo */
   margin: 20px 0;
   padding: 15px;
@@ -83,4 +96,13 @@ iframe {
   margin-top: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.success {
+  background-color: #28a745;
+}
+
+.error {
+  background-color: #dc3545;
+  color: white;
 }

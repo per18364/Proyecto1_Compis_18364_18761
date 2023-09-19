@@ -8,6 +8,7 @@ RPAREN: ')';
 SEMI: ';';
 COMMA: ',';
 EQUALS: '=';
+ASSIGN: '<-';
 PLUS: '+';
 MINUS: '-';
 MULT: '*';
@@ -40,7 +41,7 @@ classBody: (
 attributeDeclaration: type ID SEMI;
 
 // Assignment Declaration
-assignmentDeclaration: ID EQUALS expression SEMI;
+assignmentDeclaration: ID ASSIGN expression SEMI;
 
 // Types
 type: INT | STRING_TYPE | TYPE_ID | BOOL;
@@ -102,7 +103,7 @@ expression:
 	| expression LT_EQ expression						# lessThanOrEqualExpression
 	| expression GT_EQ expression						# greaterThanOrEqualExpression
 	| expression NEQ expression							# notEqualExpression
-	| expression EQUALS expression						# assignmentExpression
+	| expression ASSIGN expression						# assignmentExpression
 	| expression AND expression							# andExpression
 	| expression OR expression							# orExpression
 	| expression DOT ID LPAREN expressionList? RPAREN	# methodCallExpression

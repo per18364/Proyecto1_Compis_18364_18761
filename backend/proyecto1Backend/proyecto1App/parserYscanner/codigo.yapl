@@ -2,7 +2,7 @@ class Animal {
     int age;
     string name;
     int hair;
-    age = 5;
+    age <- 5;
     
     int bark() {
         if (age < 10) {

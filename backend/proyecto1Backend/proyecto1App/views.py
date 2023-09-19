@@ -43,10 +43,14 @@ class CustomErrorListener(ErrorListener):
                 f"ERROR léxico en línea {line}, columna {column}: Carácter inesperado -> '{err}'")
         else:
             if offendingSymbol.text not in self.table.scopes[-1]:
-                self.errors.append(
+                # self.errors.append(
+                #     f"ERROR semántico en línea {line}, columna {column}: {offendingSymbol.text} no ha sido declarado")
+                print(
                     f"ERROR semántico en línea {line}, columna {column}: {offendingSymbol.text} no ha sido declarado")
             else:
-                self.errors.append(
+                # self.errors.append(
+                #     f"ERROR sintáctico en línea {line}, columna {column}: {msg}")
+                print(
                     f"ERROR sintáctico en línea {line}, columna {column}: {msg}")
 
 
@@ -90,6 +94,10 @@ class MyListener(yaplListener):
         self.error_listener = error_listener
         self.inside_block = False
         self.block_depth = 0
+        self.class_count = 0
+        self.block_bracket_count = 0
+        self.class_bracket_count = 0
+        self.method_bracket_count = 0
 
     def declareSymbol(self, ctx, symbol, symbol_type):
         """Maneja símbolos, ya sea para declarar o verificar su uso."""
@@ -124,9 +132,17 @@ class MyListener(yaplListener):
 
     def enterClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
         print("\nEntrando en ClassDeclaration")
+        print(ctx.getText())
         class_name = ctx.TYPE_ID()[0].getText()
+        self.class_count += 1
+        if self.class_count == 1 and class_name != "Main":
+            self.error_listener.errors.append(
+                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> La clase principal debe llamarse Main.")
         self.declareSymbol(ctx, class_name, "class")
         if len(ctx.TYPE_ID()) > 1:
+            if class_name == "Main":
+                self.error_listener.errors.append(
+                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> La clase principal no puede heredar de otra clase.")
             inherits = ctx.TYPE_ID()[1].getText()
             print(inherits)
             if self.symbol_table.is_declared(inherits):
@@ -135,10 +151,24 @@ class MyListener(yaplListener):
                 print(f"{inherits} no es una clase")
                 self.error_listener.errors.append(
                     f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> {inherits} no es una clase declarada.")
+        if ctx.LBRACE().getText() == "{":
+            print("LLAVE DE APERTURA class")
+            self.class_bracket_count += 1
+            print(self.class_bracket_count)
         self.symbol_table.enter_scope()  # Nuevo ámbito para la clase
 
     def exitClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
         print("Saliendo de ClassDeclaration")
+        class_name = ctx.TYPE_ID()[0].getText()
+        print(ctx.RBRACE())
+        if ctx.RBRACE().getText() == "}":
+            print("LLAVE DE CIERRE class")
+            self.class_bracket_count -= 1
+            print(self.class_bracket_count)
+        if self.class_bracket_count != 0:
+            print("FALTA UNA LLAVE DE CIERRE")
+            self.error_listener.errors.append(
+                f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta llave de cierre de la clase {class_name}.")
         # self.symbol_table.exit_scope()  # Salir del ámbito de la clase
 
     def enterMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
@@ -148,15 +178,29 @@ class MyListener(yaplListener):
         method_type = ctx.getChild(0).getText()
         self.declareSymbol(ctx, method_name, "method: " +
                            method_type)
+        # if ctx.LPAREN().getText() == "(":
+        #     print("PARENTESIS DE APERTURA method")
+        #     self.block_bracket_count += 1
         self.symbol_table.enter_scope()  # Nuevo ámbito para el método
 
     def exitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Saliendo de MethodDeclaration")
+        # if ctx.RPAREN():
+        #     print("PARENTESIS DE CIERRE method")
+        #     self.block_bracket_count -= 1
+        # if self.block_bracket_count != 0:
+        #     print("FALTA UN PARENTESIS DE CIERRE")
+        #     self.error_listener.errors.append(
+        #         f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta parentesis de cierre del método.")
         self.symbol_table.exit_scope()  # Salir del ámbito del método
 
     def enterBlock(self, ctx: yaplParser.BlockContext):
         print("Entrando en Block")
         self.inside_block = True
+        # if ctx.LBRACE():
+        #     print("LLAVE DE APERTURA block")
+        #     self.block_bracket_count += 1
+        #     print(self.block_bracket_count)
         self.block_depth += 1
         self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
 
@@ -164,7 +208,16 @@ class MyListener(yaplListener):
         print("Saliendo de Block")
         self.inside_block = False
         self.block_depth -= 1
-        self.symbol_table.exit_scope()  # Salir del ámbito del bloque
+        # if ctx.RBRACE():
+        #     print("LLAVE DE CIERRE block")
+        #     self.block_bracket_count -= 1
+        #     print(self.block_bracket_count)
+        # if self.block_bracket_count % 2 != 0:
+        #     print("FALTA UNA LLAVE DE CIERRE")
+        #     self.error_listener.errors.append(
+        #         f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta llave de cierre en el bloque ")
+
+        # self.symbol_table.exit_scope()  # Salir del ámbito del bloque
 
     def enterVariableDeclaration(self, ctx: yaplParser.VariableDeclarationContext):
         if self.block_depth > 0:  # Solo si estamos dentro de un bloque
@@ -174,12 +227,12 @@ class MyListener(yaplListener):
             type_ctx = ctx.getChild(0)
             type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
             self.declareSymbol(ctx, symbol, type_text)
-        # self.symbol_table.enter_scope()  # Nuevo ámbito para la variable
+            self.symbol_table.enter_scope()  # Nuevo ámbito para la variable
 
     def exitVariableDeclaration(self, ctx: yaplParser.VariableDeclarationContext):
         if self.block_depth > 0:  # Solo si estamos dentro de un bloque
             print("Saliendo de  VariableDeclaration")
-        # self.symbol_table.exit_scope()
+            self.symbol_table.exit_scope()
 
     def enterAttributeDeclaration(self, ctx: yaplParser.AttributeDeclarationContext):
         print("Entrando en AttributeDeclaration")
@@ -205,9 +258,9 @@ class MyListener(yaplListener):
         # block
         self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
 
-    # def exitIfStatement(self, ctx: yaplParser.IfStatementContext):
-    #     print("Saliendo de IfStatement")
-    #     self.symbol_table.exit_scope()  # Salir del ámbito del bloque
+    def exitIfStatement(self, ctx: yaplParser.IfStatementContext):
+        print("Saliendo de IfStatement")
+        # self.symbol_table.exit_scope()  # Salir del ámbito del bloque
 
     def enterWhileStatement(self, ctx: yaplParser.WhileStatementContext):
         print("Entrando en WhileStatement")
@@ -216,6 +269,14 @@ class MyListener(yaplListener):
     # def exitWhileStatement(self, ctx: yaplParser.WhileStatementContext):
     #     print("Saliendo de WhileStatement")
     #     self.symbol_table.exit_scope()
+
+    def enterReturnStatement(self, ctx: yaplParser.ReturnStatementContext):
+        print("Entrando en ReturnStatement")
+        # self.symbol_table.enter_scope()
+
+    def exitReturnStatement(self, ctx: yaplParser.ReturnStatementContext):
+        print("Saliendo de ReturnStatement")
+        # self.symbol_table.exit_scope()
 
     def enterExpressionStatement(self, ctx: yaplParser.ExpressionStatementContext):
         print("Entrando en ExpressionStatement")
@@ -250,9 +311,13 @@ class MyListener(yaplListener):
                 if variable == "true" or variable == "false":
                     print("valor booleano")
                 elif self.symbol_table.is_declared(variable):
-                    print(
-                        f"variable {variable} is declared as {self.symbol_table.lookup(variable)['tipo']}")
+                    if self.symbol_table.is_declared(variable, current_scope_only=True):
+                        print(
+                            f"variable {variable} is declared as {self.symbol_table.lookup(variable)['tipo']}")
                     # check if both variables are the same type
+                    else:
+                        self.error_listener.errors.append(
+                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variable} que no ha sido declarado en esa instancia.")
                 else:
                     self.error_listener.errors.append(
                         f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variable} que no ha sido declarado en esa instancia.")
@@ -304,7 +369,8 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
             else:
                 tree_str = tree.toStringTree(recog=parser)
                 # tree = parse_tree(tree_str)
-                return Response({'tree': tree_str, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
+                # return Response({'tree': tree_str, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
+                return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

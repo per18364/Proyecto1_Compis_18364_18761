@@ -29,6 +29,31 @@ export class IdeComponent {
     }
   }
 
+  updateLineNumbers() {
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    const lineNumbersDiv = document.querySelector(
+      '.line-numbers'
+    ) as HTMLElement;
+    const lines = textarea.value.split('\n').length;
+
+    lineNumbersDiv.innerHTML = '';
+    for (let i = 1; i <= lines; i++) {
+      const lineNumber = document.createElement('div');
+      lineNumber.innerText = i.toString();
+      lineNumbersDiv.appendChild(lineNumber);
+      lineNumber.style.fontFamily = 'monospace';
+      lineNumber.style.fontSize = '16px';
+    }
+  }
+
+  syncScroll() {
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    const lineNumbersDiv = document.querySelector(
+      '.line-numbers'
+    ) as HTMLElement;
+    lineNumbersDiv.scrollTop = textarea.scrollTop;
+  }
+
   analyze() {
     this.analysisService.analyzeCode(this.code).subscribe(
       (data) => {
@@ -42,7 +67,7 @@ export class IdeComponent {
         console.log('result', this.result);
       }
     );
-    const time = new Date().getTime();
-    this.pdfUrl = `../../assets/arbol_sintactico.pdf?ts=${time}`;
+    // const time = new Date().getTime();
+    // this.pdfUrl = `../../assets/arbol_sintactico.pdf?ts=${time}`;
   }
 }
