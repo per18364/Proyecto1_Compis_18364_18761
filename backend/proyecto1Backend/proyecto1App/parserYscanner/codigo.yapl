@@ -1,4 +1,4 @@
-class Animal {
+class Main {
     int age;
     string name;
     int hair;

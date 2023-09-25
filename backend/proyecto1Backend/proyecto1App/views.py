@@ -98,6 +98,8 @@ class MyListener(yaplListener):
         self.block_bracket_count = 0
         self.class_bracket_count = 0
         self.method_bracket_count = 0
+        self.method_type = ''
+        self.method_params = {}
 
     def declareSymbol(self, ctx, symbol, symbol_type):
         """Maneja símbolos, ya sea para declarar o verificar su uso."""
@@ -142,7 +144,7 @@ class MyListener(yaplListener):
         if len(ctx.TYPE_ID()) > 1:
             if class_name == "Main":
                 self.error_listener.errors.append(
-                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> La clase principal no puede heredar de otra clase.")
+                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> La clase principal Main no puede heredar de otra clase.")
             inherits = ctx.TYPE_ID()[1].getText()
             print(inherits)
             if self.symbol_table.is_declared(inherits):
@@ -173,66 +175,98 @@ class MyListener(yaplListener):
 
     def enterMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Entrando en MethodDeclaration")
+        self.symbol_table.enter_scope()  # Nuevo ámbito para el método
         method_name = ctx.ID().getText()
         # Esto devuelve el texto del tipo
         method_type = ctx.getChild(0).getText()
         self.declareSymbol(ctx, method_name, "method: " +
                            method_type)
+        self.method_type = method_type
+        params = ctx.parameterList()
+        if params:
+            print(ctx.parameterList().getText())
+            for param in params.parameter():
+                param_name = param.ID().getText()
+                param_type = param.getChild(0).getText()
+                self.declareSymbol(ctx, param_name, param_type)
+                self.method_params[method_name] = {
+                    'tipo': method_type, 'parametros': {param_name: param_type}}
+        else:
+            self.method_params[method_name] = {
+                'tipo': method_type, 'parametros': {}}
+
         # if ctx.LPAREN().getText() == "(":
         #     print("PARENTESIS DE APERTURA method")
         #     self.block_bracket_count += 1
-        self.symbol_table.enter_scope()  # Nuevo ámbito para el método
 
     def exitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Saliendo de MethodDeclaration")
-        # if ctx.RPAREN():
-        #     print("PARENTESIS DE CIERRE method")
-        #     self.block_bracket_count -= 1
-        # if self.block_bracket_count != 0:
-        #     print("FALTA UN PARENTESIS DE CIERRE")
-        #     self.error_listener.errors.append(
-        #         f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta parentesis de cierre del método.")
-        self.symbol_table.exit_scope()  # Salir del ámbito del método
+        # self.symbol_table.exit_scope()  # Salir del ámbito del método
+
+    def enterMethodCallStatement(self, ctx: yaplParser.MethodCallStatementContext):
+        print("Entrando en MethodCallStatement")
+        method_name = ctx.ID().getText()
+        # print(method_name)
+        params = ctx.expressionList()
+        # print(self.method_params)
+        if method_name in self.method_params:
+            if params:
+                # print(ctx.expressionList().getText())
+                for param in params.expression():
+                    param_name = param.ID().getText()
+                    # print("name", param_name)
+                    param_type = self.symbol_table.lookup(param_name)['tipo']
+                    # print("type", param_type)
+                    for key, value in self.method_params[method_name]['parametros'].items():
+                        if param_name == key or param_type == self.method_params[method_name]['parametros'][key]:
+                            print("parametro correcto")
+                        else:
+                            self.error_listener.errors.append(
+                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método <{method_name}> es <{value}> y se le está pasando un parametro <{param_name}> tipo <{param_type}>.")
+                    if param_name and self.method_params[method_name]['parametros'] == {}:
+                        print("hay parametros y no necesita parametros")
+                        self.error_listener.errors.append(
+                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El método <{method_name}> no requiere parámetros.")
+            elif not params and self.method_params[method_name]['parametros'] == {}:
+                print("no hay parametros y no necesita parametros")
+            else:
+                self.error_listener.errors.append(
+                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El método <{method_name}> requiere parámetros de tipo <{self.method_params[method_name]['tipo']}>.")
+        # self.symbol_table.enter_scope()
+
+    def exitMethodCallStatement(self, ctx: yaplParser.MethodCallStatementContext):
+        print("Saliendo de MethodCallStatement")
+        # self.symbol_table.exit_scope()
 
     def enterBlock(self, ctx: yaplParser.BlockContext):
         print("Entrando en Block")
+        # self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
+        print(self.symbol_table.scopes)
         self.inside_block = True
-        # if ctx.LBRACE():
-        #     print("LLAVE DE APERTURA block")
-        #     self.block_bracket_count += 1
-        #     print(self.block_bracket_count)
         self.block_depth += 1
-        self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
 
     def exitBlock(self, ctx: yaplParser.BlockContext):
         print("Saliendo de Block")
         self.inside_block = False
         self.block_depth -= 1
-        # if ctx.RBRACE():
-        #     print("LLAVE DE CIERRE block")
-        #     self.block_bracket_count -= 1
-        #     print(self.block_bracket_count)
-        # if self.block_bracket_count % 2 != 0:
-        #     print("FALTA UNA LLAVE DE CIERRE")
-        #     self.error_listener.errors.append(
-        #         f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta llave de cierre en el bloque ")
-
         # self.symbol_table.exit_scope()  # Salir del ámbito del bloque
+        # print(self.symbol_table.scopes)
 
     def enterVariableDeclaration(self, ctx: yaplParser.VariableDeclarationContext):
         if self.block_depth > 0:  # Solo si estamos dentro de un bloque
             print("Declaración de variable dentro de un bloque")
+            # self.symbol_table.enter_scope()  # Nuevo ámbito para la variable
+            print(self.block_depth)
             symbol = ctx.ID().getText()
             # print(symbol)
             type_ctx = ctx.getChild(0)
             type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
             self.declareSymbol(ctx, symbol, type_text)
-            self.symbol_table.enter_scope()  # Nuevo ámbito para la variable
 
     def exitVariableDeclaration(self, ctx: yaplParser.VariableDeclarationContext):
         if self.block_depth > 0:  # Solo si estamos dentro de un bloque
             print("Saliendo de  VariableDeclaration")
-            self.symbol_table.exit_scope()
+            # self.symbol_table.exit_scope()
 
     def enterAttributeDeclaration(self, ctx: yaplParser.AttributeDeclarationContext):
         print("Entrando en AttributeDeclaration")
@@ -249,14 +283,18 @@ class MyListener(yaplListener):
 
     def enterAssignmentDeclaration(self, ctx: yaplParser.AssignmentDeclarationContext):
         print("Entrando en AssignmentDeclaration")
+        # self.symbol_table.enter_scope()  # Nuevo ámbito para la asignación
         symbol = ctx.ID().getText()
         self.accessSymbol(ctx, symbol)
-        self.symbol_table.enter_scope()  # Nuevo ámbito para la asignación
+
+    def exitAssignmentDeclaration(self, ctx: yaplParser.AssignmentDeclarationContext):
+        print("Saliendo de AssignmentDeclaration")
+        # self.symbol_table.exit_scope()
 
     def enterIfStatement(self, ctx: yaplParser.IfStatementContext):
         print("Entrando en IfStatement")
         # block
-        self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
+        # self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
 
     def exitIfStatement(self, ctx: yaplParser.IfStatementContext):
         print("Saliendo de IfStatement")
@@ -264,7 +302,7 @@ class MyListener(yaplListener):
 
     def enterWhileStatement(self, ctx: yaplParser.WhileStatementContext):
         print("Entrando en WhileStatement")
-        self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
+        # self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
 
     # def exitWhileStatement(self, ctx: yaplParser.WhileStatementContext):
     #     print("Saliendo de WhileStatement")
@@ -272,10 +310,60 @@ class MyListener(yaplListener):
 
     def enterReturnStatement(self, ctx: yaplParser.ReturnStatementContext):
         print("Entrando en ReturnStatement")
+        print(self.method_type)
+        if ctx.expression():
+            expression = ctx.expression().getText()
+            print(expression)
+            if self.symbol_table.is_declared(expression, current_scope_only=True):
+                print("variable declarada")
+                if self.method_type == "int":
+                    if expression.isnumeric():
+                        print("es un numero")
+                    else:
+                        if self.symbol_table.is_declared(expression):
+                            if self.symbol_table.lookup(expression)['tipo'] != "int":
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
+                elif self.method_type == "string":
+                    if expression.startswith('"') and expression.endswith('"'):
+                        print("es un string")
+                    else:
+                        if self.symbol_table.is_declared(expression):
+                            if self.symbol_table.lookup(expression)['tipo'] != "string":
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
+                elif self.method_type == "bool":
+                    if expression == "true" or expression == "false":
+                        print("es un booleano")
+                    else:
+                        if self.symbol_table.is_declared(expression):
+                            if self.symbol_table.lookup(expression)['tipo'] != "bool":
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
+            elif expression.isnumeric():
+                if self.method_type != "int":
+                    self.error_listener.errors.append(
+                        f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <int>.")
+            elif expression.startswith('"') and expression.endswith('"'):
+                if self.method_type != "string":
+                    self.error_listener.errors.append(
+                        f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <string>.")
+            elif expression == "true" or expression == "false":
+                if self.method_type != "bool":
+                    self.error_listener.errors.append(
+                        f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <bool>.")
+            else:
+                self.error_listener.errors.append(
+                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de <{expression}> que no ha sido declarado.")
+        else:
+            if self.method_type != "void":
+                self.error_listener.errors.append(
+                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <void>.")
         # self.symbol_table.enter_scope()
 
     def exitReturnStatement(self, ctx: yaplParser.ReturnStatementContext):
         print("Saliendo de ReturnStatement")
+        # self.method_type = ''
         # self.symbol_table.exit_scope()
 
     def enterExpressionStatement(self, ctx: yaplParser.ExpressionStatementContext):
@@ -325,11 +413,11 @@ class MyListener(yaplListener):
         elif not self.symbol_table.is_declared(expression.getText()):
             self.error_listener.errors.append(
                 f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {expression.getText()} que no ha sido declarado.")
-        self.symbol_table.enter_scope()
+        # self.symbol_table.enter_scope()
 
     def exitExpressionStatement(self, ctx: yaplParser.ExpressionStatementContext):
         print("Saliendo de ExpressionStatement")
-        self.symbol_table.exit_scope()
+        # self.symbol_table.exit_scope()
 
 
 class AnalyzeCodeSerializer(serializers.ModelSerializer):
@@ -370,7 +458,7 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
                 tree_str = tree.toStringTree(recog=parser)
                 # tree = parse_tree(tree_str)
                 # return Response({'tree': tree_str, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
-                return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!'}, status=status.HTTP_200_OK)
+                return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

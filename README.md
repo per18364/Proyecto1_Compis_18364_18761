@@ -59,7 +59,7 @@ Este proyecto combina el poder de Angular.js para el frontend y Django para el b
 1. Navegar al directorio `frontend`:
 
    ```bash
-   cd frontend
+   cd interfaz-proyecto1-compis
    ```
 
 2. Instalar los modulos de Node.js:
