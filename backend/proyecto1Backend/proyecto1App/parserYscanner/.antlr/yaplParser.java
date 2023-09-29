@@ -20,8 +20,8 @@ public class yaplParser extends Parser {
 		PLUS=9, MINUS=10, MULT=11, DIV=12, EQ=13, NEQ=14, LT=15, GT=16, GT_EQ=17, 
 		LT_EQ=18, AND=19, OR=20, TRUE=21, DOT=22, FALSE=23, CLASS=24, INHERITS=25, 
 		SELF=26, SELF_TYPE=27, ELSE=28, FI=29, IF=30, WHILE=31, NEW=32, ISVOID=33, 
-		NOT=34, RETURN=35, INT=36, STRING_TYPE=37, BOOL=38, ID=39, TYPE_ID=40, 
-		INTEGER=41, STRING=42, COMMENT=43, WS=44;
+		NOT=34, RETURN=35, INT=36, STRING_TYPE=37, BOOL=38, VOID=39, ID=40, TYPE_ID=41, 
+		INTEGER=42, STRING=43, COMMENT=44, WS=45;
 	public static final int
 		RULE_program = 0, RULE_classDeclaration = 1, RULE_classBody = 2, RULE_attributeDeclaration = 3, 
 		RULE_assignmentDeclaration = 4, RULE_type = 5, RULE_methodDeclaration = 6, 
@@ -46,7 +46,7 @@ public class yaplParser extends Parser {
 			"'-'", "'*'", "'/'", "'=='", "'!='", "'<'", "'>'", "'>='", "'<='", "'&&'", 
 			"'||'", "'true'", "'.'", "'false'", "'class'", "'inherits'", "'self'", 
 			"'SELF_TYPE'", "'else'", "'fi'", "'if'", "'while'", "'new'", "'isvoid'", 
-			"'not'", "'return'", "'int'", "'string'", "'bool'"
+			"'not'", "'return'", "'int'", "'string'", "'bool'", "'void'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -56,8 +56,8 @@ public class yaplParser extends Parser {
 			"ASSIGN", "PLUS", "MINUS", "MULT", "DIV", "EQ", "NEQ", "LT", "GT", "GT_EQ", 
 			"LT_EQ", "AND", "OR", "TRUE", "DOT", "FALSE", "CLASS", "INHERITS", "SELF", 
 			"SELF_TYPE", "ELSE", "FI", "IF", "WHILE", "NEW", "ISVOID", "NOT", "RETURN", 
-			"INT", "STRING_TYPE", "BOOL", "ID", "TYPE_ID", "INTEGER", "STRING", "COMMENT", 
-			"WS"
+			"INT", "STRING_TYPE", "BOOL", "VOID", "ID", "TYPE_ID", "INTEGER", "STRING", 
+			"COMMENT", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -262,7 +262,7 @@ public class yaplParser extends Parser {
 			setState(62);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LBRACE) | (1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << WHILE) | (1L << NEW) | (1L << NOT) | (1L << RETURN) | (1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << ID) | (1L << TYPE_ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LBRACE) | (1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << WHILE) | (1L << NEW) | (1L << NOT) | (1L << RETURN) | (1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << VOID) | (1L << ID) | (1L << TYPE_ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
 				{
 				setState(60);
 				_errHandler.sync(this);
@@ -392,6 +392,7 @@ public class yaplParser extends Parser {
 		public TerminalNode STRING_TYPE() { return getToken(yaplParser.STRING_TYPE, 0); }
 		public TerminalNode TYPE_ID() { return getToken(yaplParser.TYPE_ID, 0); }
 		public TerminalNode BOOL() { return getToken(yaplParser.BOOL, 0); }
+		public TerminalNode VOID() { return getToken(yaplParser.VOID, 0); }
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -407,7 +408,7 @@ public class yaplParser extends Parser {
 			{
 			setState(74);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << TYPE_ID))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << VOID) | (1L << TYPE_ID))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -463,7 +464,7 @@ public class yaplParser extends Parser {
 			setState(80);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << TYPE_ID))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << VOID) | (1L << TYPE_ID))) != 0)) {
 				{
 				setState(79);
 				parameterList();
@@ -679,7 +680,7 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode ID() { return getToken(yaplParser.ID, 0); }
 		public TerminalNode SEMI() { return getToken(yaplParser.SEMI, 0); }
-		public TerminalNode EQUALS() { return getToken(yaplParser.EQUALS, 0); }
+		public TerminalNode ASSIGN() { return getToken(yaplParser.ASSIGN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -703,10 +704,10 @@ public class yaplParser extends Parser {
 			setState(109);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==EQUALS) {
+			if (_la==ASSIGN) {
 				{
 				setState(107);
-				match(EQUALS);
+				match(ASSIGN);
 				setState(108);
 				expression(0);
 				}
@@ -1051,7 +1052,7 @@ public class yaplParser extends Parser {
 			setState(159);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LBRACE) | (1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << WHILE) | (1L << NEW) | (1L << NOT) | (1L << RETURN) | (1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << ID) | (1L << TYPE_ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LBRACE) | (1L << MINUS) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << WHILE) | (1L << NEW) | (1L << NOT) | (1L << RETURN) | (1L << INT) | (1L << STRING_TYPE) | (1L << BOOL) | (1L << VOID) | (1L << ID) | (1L << TYPE_ID) | (1L << INTEGER) | (1L << STRING))) != 0)) {
 				{
 				{
 				setState(156);
@@ -1649,7 +1650,7 @@ public class yaplParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3.\u00ef\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3/\u00ef\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\3\2\7\2*\n\2\f\2\16\2-\13\2\3\2\3\2\3\3\3\3\3\3\3"+
@@ -1667,28 +1668,28 @@ public class yaplParser extends Parser {
 		"\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24"+
 		"\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\3\24\5\24\u00e7\n\24"+
 		"\3\24\7\24\u00ea\n\24\f\24\16\24\u00ed\13\24\3\24\2\3&\25\2\4\6\b\n\f"+
-		"\16\20\22\24\26\30\32\34\36 \"$&\2\3\4\2&(**\2\u0107\2+\3\2\2\2\4\60\3"+
+		"\16\20\22\24\26\30\32\34\36 \"$&\2\3\4\2&)++\2\u0107\2+\3\2\2\2\4\60\3"+
 		"\2\2\2\6@\3\2\2\2\bC\3\2\2\2\nG\3\2\2\2\fL\3\2\2\2\16N\3\2\2\2\20W\3\2"+
 		"\2\2\22_\3\2\2\2\24i\3\2\2\2\26k\3\2\2\2\30s\3\2\2\2\32~\3\2\2\2\34\u0084"+
 		"\3\2\2\2\36\u008c\3\2\2\2 \u008f\3\2\2\2\"\u0095\3\2\2\2$\u009d\3\2\2"+
 		"\2&\u00b8\3\2\2\2(*\5\4\3\2)(\3\2\2\2*-\3\2\2\2+)\3\2\2\2+,\3\2\2\2,."+
-		"\3\2\2\2-+\3\2\2\2./\7\2\2\3/\3\3\2\2\2\60\61\7\32\2\2\61\64\7*\2\2\62"+
-		"\63\7\33\2\2\63\65\7*\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\66\3\2\2\2\66"+
+		"\3\2\2\2-+\3\2\2\2./\7\2\2\3/\3\3\2\2\2\60\61\7\32\2\2\61\64\7+\2\2\62"+
+		"\63\7\33\2\2\63\65\7+\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65\66\3\2\2\2\66"+
 		"\67\7\3\2\2\678\5\6\4\289\7\4\2\29\5\3\2\2\2:?\5\b\5\2;?\5\16\b\2<?\5"+
 		"\n\6\2=?\5\24\13\2>:\3\2\2\2>;\3\2\2\2><\3\2\2\2>=\3\2\2\2?B\3\2\2\2@"+
-		">\3\2\2\2@A\3\2\2\2A\7\3\2\2\2B@\3\2\2\2CD\5\f\7\2DE\7)\2\2EF\7\7\2\2"+
-		"F\t\3\2\2\2GH\7)\2\2HI\7\n\2\2IJ\5&\24\2JK\7\7\2\2K\13\3\2\2\2LM\t\2\2"+
-		"\2M\r\3\2\2\2NO\5\f\7\2OP\7)\2\2PR\7\5\2\2QS\5\20\t\2RQ\3\2\2\2RS\3\2"+
+		">\3\2\2\2@A\3\2\2\2A\7\3\2\2\2B@\3\2\2\2CD\5\f\7\2DE\7*\2\2EF\7\7\2\2"+
+		"F\t\3\2\2\2GH\7*\2\2HI\7\n\2\2IJ\5&\24\2JK\7\7\2\2K\13\3\2\2\2LM\t\2\2"+
+		"\2M\r\3\2\2\2NO\5\f\7\2OP\7*\2\2PR\7\5\2\2QS\5\20\t\2RQ\3\2\2\2RS\3\2"+
 		"\2\2ST\3\2\2\2TU\7\6\2\2UV\5$\23\2V\17\3\2\2\2W\\\5\22\n\2XY\7\b\2\2Y"+
 		"[\5\22\n\2ZX\3\2\2\2[^\3\2\2\2\\Z\3\2\2\2\\]\3\2\2\2]\21\3\2\2\2^\\\3"+
-		"\2\2\2_`\5\f\7\2`a\7)\2\2a\23\3\2\2\2bj\5\26\f\2cj\5\30\r\2dj\5\32\16"+
+		"\2\2\2_`\5\f\7\2`a\7*\2\2a\23\3\2\2\2bj\5\26\f\2cj\5\30\r\2dj\5\32\16"+
 		"\2ej\5\34\17\2fj\5\36\20\2gj\5 \21\2hj\5$\23\2ib\3\2\2\2ic\3\2\2\2id\3"+
 		"\2\2\2ie\3\2\2\2if\3\2\2\2ig\3\2\2\2ih\3\2\2\2j\25\3\2\2\2kl\5\f\7\2l"+
-		"o\7)\2\2mn\7\t\2\2np\5&\24\2om\3\2\2\2op\3\2\2\2pq\3\2\2\2qr\7\7\2\2r"+
+		"o\7*\2\2mn\7\n\2\2np\5&\24\2om\3\2\2\2op\3\2\2\2pq\3\2\2\2qr\7\7\2\2r"+
 		"\27\3\2\2\2st\7 \2\2tu\7\5\2\2uv\5&\24\2vw\7\6\2\2wz\5\24\13\2xy\7\36"+
 		"\2\2y{\5\24\13\2zx\3\2\2\2z{\3\2\2\2{|\3\2\2\2|}\7\37\2\2}\31\3\2\2\2"+
 		"~\177\7!\2\2\177\u0080\7\5\2\2\u0080\u0081\5&\24\2\u0081\u0082\7\6\2\2"+
-		"\u0082\u0083\5\24\13\2\u0083\33\3\2\2\2\u0084\u0085\7)\2\2\u0085\u0087"+
+		"\u0082\u0083\5\24\13\2\u0083\33\3\2\2\2\u0084\u0085\7*\2\2\u0085\u0087"+
 		"\7\5\2\2\u0086\u0088\5\"\22\2\u0087\u0086\3\2\2\2\u0087\u0088\3\2\2\2"+
 		"\u0088\u0089\3\2\2\2\u0089\u008a\7\6\2\2\u008a\u008b\7\7\2\2\u008b\35"+
 		"\3\2\2\2\u008c\u008d\5&\24\2\u008d\u008e\7\7\2\2\u008e\37\3\2\2\2\u008f"+
@@ -1699,11 +1700,11 @@ public class yaplParser extends Parser {
 		"\u009c\u009a\3\2\2\2\u009d\u00a1\7\3\2\2\u009e\u00a0\5\24\13\2\u009f\u009e"+
 		"\3\2\2\2\u00a0\u00a3\3\2\2\2\u00a1\u009f\3\2\2\2\u00a1\u00a2\3\2\2\2\u00a2"+
 		"\u00a4\3\2\2\2\u00a3\u00a1\3\2\2\2\u00a4\u00a5\7\4\2\2\u00a5%\3\2\2\2"+
-		"\u00a6\u00a7\b\24\1\2\u00a7\u00a8\7\"\2\2\u00a8\u00b9\7*\2\2\u00a9\u00aa"+
+		"\u00a6\u00a7\b\24\1\2\u00a7\u00a8\7\"\2\2\u00a8\u00b9\7+\2\2\u00a9\u00aa"+
 		"\7$\2\2\u00aa\u00b9\5&\24\n\u00ab\u00ac\7\f\2\2\u00ac\u00b9\5&\24\t\u00ad"+
-		"\u00ae\7)\2\2\u00ae\u00b0\7\5\2\2\u00af\u00b1\5\"\22\2\u00b0\u00af\3\2"+
+		"\u00ae\7*\2\2\u00ae\u00b0\7\5\2\2\u00af\u00b1\5\"\22\2\u00b0\u00af\3\2"+
 		"\2\2\u00b0\u00b1\3\2\2\2\u00b1\u00b2\3\2\2\2\u00b2\u00b9\7\6\2\2\u00b3"+
-		"\u00b9\7)\2\2\u00b4\u00b9\7+\2\2\u00b5\u00b9\7,\2\2\u00b6\u00b9\7\27\2"+
+		"\u00b9\7*\2\2\u00b4\u00b9\7,\2\2\u00b5\u00b9\7-\2\2\u00b6\u00b9\7\27\2"+
 		"\2\u00b7\u00b9\7\31\2\2\u00b8\u00a6\3\2\2\2\u00b8\u00a9\3\2\2\2\u00b8"+
 		"\u00ab\3\2\2\2\u00b8\u00ad\3\2\2\2\u00b8\u00b3\3\2\2\2\u00b8\u00b4\3\2"+
 		"\2\2\u00b8\u00b5\3\2\2\2\u00b8\u00b6\3\2\2\2\u00b8\u00b7\3\2\2\2\u00b9"+
@@ -1719,7 +1720,7 @@ public class yaplParser extends Parser {
 		"\5&\24\21\u00d8\u00d9\f\17\2\2\u00d9\u00da\7\n\2\2\u00da\u00ea\5&\24\20"+
 		"\u00db\u00dc\f\16\2\2\u00dc\u00dd\7\25\2\2\u00dd\u00ea\5&\24\17\u00de"+
 		"\u00df\f\r\2\2\u00df\u00e0\7\26\2\2\u00e0\u00ea\5&\24\16\u00e1\u00e2\f"+
-		"\f\2\2\u00e2\u00e3\7\30\2\2\u00e3\u00e4\7)\2\2\u00e4\u00e6\7\5\2\2\u00e5"+
+		"\f\2\2\u00e2\u00e3\7\30\2\2\u00e3\u00e4\7*\2\2\u00e4\u00e6\7\5\2\2\u00e5"+
 		"\u00e7\5\"\22\2\u00e6\u00e5\3\2\2\2\u00e6\u00e7\3\2\2\2\u00e7\u00e8\3"+
 		"\2\2\2\u00e8\u00ea\7\6\2\2\u00e9\u00ba\3\2\2\2\u00e9\u00bd\3\2\2\2\u00e9"+
 		"\u00c0\3\2\2\2\u00e9\u00c3\3\2\2\2\u00e9\u00c6\3\2\2\2\u00e9\u00c9\3\2"+

@@ -62,7 +62,7 @@ class SymbolTable:
         self.scopes.append({})
 
     def exit_scope(self):
-        if len(self.scopes) > 1:
+        if len(self.scopes) > 1 and self.scopes[-1] == {}:
             self.scopes.pop()
         else:
             print("Warning: Trying to exit the global scope!")
@@ -95,6 +95,7 @@ class MyListener(yaplListener):
         self.inside_block = False
         self.block_depth = 0
         self.class_count = 0
+        self.class_name = ''
         self.block_bracket_count = 0
         self.class_bracket_count = 0
         self.method_bracket_count = 0
@@ -134,8 +135,10 @@ class MyListener(yaplListener):
 
     def enterClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
         print("\nEntrando en ClassDeclaration")
+        self.symbol_table.enter_scope()  # Nuevo ámbito para la clase
         print(ctx.getText())
         class_name = ctx.TYPE_ID()[0].getText()
+        self.class_name = class_name
         self.class_count += 1
         if self.class_count == 1 and class_name != "Main":
             self.error_listener.errors.append(
@@ -157,7 +160,7 @@ class MyListener(yaplListener):
             print("LLAVE DE APERTURA class")
             self.class_bracket_count += 1
             print(self.class_bracket_count)
-        self.symbol_table.enter_scope()  # Nuevo ámbito para la clase
+        print(self.symbol_table.scopes)
 
     def exitClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
         print("Saliendo de ClassDeclaration")
@@ -171,7 +174,9 @@ class MyListener(yaplListener):
             print("FALTA UNA LLAVE DE CIERRE")
             self.error_listener.errors.append(
                 f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta llave de cierre de la clase {class_name}.")
-        # self.symbol_table.exit_scope()  # Salir del ámbito de la clase
+        self.symbol_table.exit_scope()  # Salir del ámbito de la clase
+        # self.symbol_table.enter_scope()
+        print(self.symbol_table.scopes)
 
     def enterMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Entrando en MethodDeclaration")
@@ -198,10 +203,13 @@ class MyListener(yaplListener):
         # if ctx.LPAREN().getText() == "(":
         #     print("PARENTESIS DE APERTURA method")
         #     self.block_bracket_count += 1
+        print(self.symbol_table.scopes)
 
     def exitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Saliendo de MethodDeclaration")
+        self.method_type = ''
         # self.symbol_table.exit_scope()  # Salir del ámbito del método
+        print(self.symbol_table.scopes)
 
     def enterMethodCallStatement(self, ctx: yaplParser.MethodCallStatementContext):
         print("Entrando en MethodCallStatement")
@@ -241,7 +249,7 @@ class MyListener(yaplListener):
     def enterBlock(self, ctx: yaplParser.BlockContext):
         print("Entrando en Block")
         # self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
-        print(self.symbol_table.scopes)
+        # print(self.symbol_table.scopes)
         self.inside_block = True
         self.block_depth += 1
 
@@ -293,6 +301,60 @@ class MyListener(yaplListener):
 
     def enterIfStatement(self, ctx: yaplParser.IfStatementContext):
         print("Entrando en IfStatement")
+        expression = ctx.expression().getText()
+        print(expression)
+        # check if expression contains ==, !=, <, >, <=, >=
+        operators = ["==", "!=", "<", ">", "<=", ">="]
+        for operator in operators:
+            if operator in expression:
+                variables = re.split(operator, expression)
+                print("variables", variables, operator)
+                if operator == "==" or operator == "!=":
+                    if self.symbol_table.is_declared(variables[0]):
+                        if self.symbol_table.is_declared(variables[1]):
+                            if self.symbol_table.lookup(variables[0])['tipo'] == self.symbol_table.lookup(variables[1])['tipo']:
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <{self.symbol_table.lookup(variables[1])['tipo']}>")
+                        elif variables[1].isnumeric():
+                            print(variables[1], "es un numero")
+                            if self.symbol_table.lookup(variables[0])['tipo'] == "int":
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <int>")
+                        elif variables[1].startswith('"') and variables[1].endswith('"'):
+                            print(variables[1], "es un string")
+                            if self.symbol_table.lookup(variables[0])['tipo'] == "string":
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <string>")
+                        elif variables[1] == "true" or variables[1] == "false":
+                            print(variables[1], "es un booleano")
+                            if self.symbol_table.lookup(variables[0])['tipo'] == "bool":
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <bool>")
+                        else:
+                            self.error_listener.errors.append(
+                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variables[1]} que no ha sido declarado.")
+                elif operator == ">=" or operator == "<=" or operator == ">" or operator == "<":
+                    if self.symbol_table.is_declared(variables[0]) and self.symbol_table.is_declared(variables[1]):
+                        if self.symbol_table.lookup(variables[0])['tipo'] == self.symbol_table.lookup(variables[1])['tipo']:
+                            print("variables son del mismo tipo")
+                        elif variables[1].isnumeric():
+                            print(variables[1], "es un numero")
+                            if self.symbol_table.lookup(variables[0])['tipo'] == "int":
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <int>")
+                        else:
+                            self.error_listener.errors.append(
+                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <int>")
         # block
         # self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
 
@@ -302,18 +364,73 @@ class MyListener(yaplListener):
 
     def enterWhileStatement(self, ctx: yaplParser.WhileStatementContext):
         print("Entrando en WhileStatement")
+        expression = ctx.expression().getText()
+        print(expression)
+        operators = ["==", "!=", "<", ">", "<=", ">="]
+        for operator in operators:
+            if operator in expression:
+                variables = re.split(operator, expression)
+                print("variables", variables, operator)
+                if operator == "==" or operator == "!=":
+                    if self.symbol_table.is_declared(variables[0]):
+                        if self.symbol_table.is_declared(variables[1]):
+                            if self.symbol_table.lookup(variables[0])['tipo'] == self.symbol_table.lookup(variables[1])['tipo']:
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <{self.symbol_table.lookup(variables[1])['tipo']}>")
+                        elif variables[1].isnumeric():
+                            print(variables[1], "es un numero")
+                            if self.symbol_table.lookup(variables[0])['tipo'] == "int":
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <int>")
+                        elif variables[1].startswith('"') and variables[1].endswith('"'):
+                            print(variables[1], "es un string")
+                            if self.symbol_table.lookup(variables[0])['tipo'] == "string":
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <string>")
+                        elif variables[1] == "true" or variables[1] == "false":
+                            print(variables[1], "es un booleano")
+                            if self.symbol_table.lookup(variables[0])['tipo'] == "bool":
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <bool>")
+                        else:
+                            self.error_listener.errors.append(
+                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variables[1]} que no ha sido declarado.")
+                elif operator == ">=" or operator == "<=" or operator == ">" or operator == "<":
+                    if self.symbol_table.is_declared(variables[0]) and self.symbol_table.is_declared(variables[1]):
+                        if self.symbol_table.lookup(variables[0])['tipo'] == self.symbol_table.lookup(variables[1])['tipo']:
+                            print("variables son del mismo tipo")
+                        elif variables[1].isnumeric():
+                            print(variables[1], "es un numero")
+                            if self.symbol_table.lookup(variables[0])['tipo'] == "int":
+                                print("variables son del mismo tipo")
+                            else:
+                                self.error_listener.errors.append(
+                                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <int>")
+                        else:
+                            self.error_listener.errors.append(
+                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede comparar entre tipos de datos diferentes. {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}> y {variables[1]} es de tipo <int>")
         # self.symbol_table.enter_scope()  # Nuevo ámbito para el bloque
 
-    # def exitWhileStatement(self, ctx: yaplParser.WhileStatementContext):
-    #     print("Saliendo de WhileStatement")
+    def exitWhileStatement(self, ctx: yaplParser.WhileStatementContext):
+        print("Saliendo de WhileStatement")
     #     self.symbol_table.exit_scope()
 
     def enterReturnStatement(self, ctx: yaplParser.ReturnStatementContext):
         print("Entrando en ReturnStatement")
         print(self.method_type)
+        print(self.class_name)
         if ctx.expression():
             expression = ctx.expression().getText()
             print(expression)
+            # declaracion local en el metodo
             if self.symbol_table.is_declared(expression, current_scope_only=True):
                 print("variable declarada")
                 if self.method_type == "int":
@@ -340,6 +457,49 @@ class MyListener(yaplListener):
                             if self.symbol_table.lookup(expression)['tipo'] != "bool":
                                 self.error_listener.errors.append(
                                     f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
+                elif self.method_type == "void":
+                    if self.symbol_table.is_declared(expression):
+                        if self.symbol_table.lookup(expression)['tipo'] != "void":
+                            self.error_listener.errors.append(
+                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
+            # declaracion global en la clase
+            elif self.symbol_table.is_declared(expression):
+                for scope in self.symbol_table.scopes:
+                    if expression in scope and self.class_name not in scope:
+                        self.error_listener.errors.append(
+                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de <{expression}> que no ha sido declarado dentro del metodo.")
+                        break
+                    else:
+                        print("variable declarada global")
+                        if self.method_type == "int":
+                            if expression.isnumeric():
+                                print("es un numero")
+                            else:
+                                if self.symbol_table.is_declared(expression):
+                                    if self.symbol_table.lookup(expression)['tipo'] != "int":
+                                        self.error_listener.errors.append(
+                                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
+                        elif self.method_type == "string":
+                            if expression.startswith('"') and expression.endswith('"'):
+                                print("es un string")
+                            else:
+                                if self.symbol_table.is_declared(expression):
+                                    if self.symbol_table.lookup(expression)['tipo'] != "string":
+                                        self.error_listener.errors.append(
+                                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
+                        elif self.method_type == "bool":
+                            if expression == "true" or expression == "false":
+                                print("es un booleano")
+                            else:
+                                if self.symbol_table.is_declared(expression):
+                                    if self.symbol_table.lookup(expression)['tipo'] != "bool":
+                                        self.error_listener.errors.append(
+                                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
+                        elif self.method_type == "void":
+                            if self.symbol_table.is_declared(expression):
+                                if self.symbol_table.lookup(expression)['tipo'] != "void":
+                                    self.error_listener.errors.append(
+                                        f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
             elif expression.isnumeric():
                 if self.method_type != "int":
                     self.error_listener.errors.append(
@@ -354,7 +514,7 @@ class MyListener(yaplListener):
                         f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <bool>.")
             else:
                 self.error_listener.errors.append(
-                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de <{expression}> que no ha sido declarado.")
+                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de <{expression}> que no ha sido declarado dentro del metodo.")
         else:
             if self.method_type != "void":
                 self.error_listener.errors.append(
@@ -374,24 +534,29 @@ class MyListener(yaplListener):
         if re.search(r'[\+\-\*\/]', expression.getText()):
             variables = re.split(r'[\+\-\*\/]', expression.getText())
             print("variables", variables)
-            for variable in variables:
-                # check if variable is a number
-                if variable.isnumeric() or variable.isdecimal():
-                    print(f"variable {variable} is a number")
-                elif (variable.startswith('"') and variable.endswith('"')):
-                    # if both variables are strings then it's ok only if it's a +
-                    self.error_listener.errors.append(
-                        f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variables[0]} y {variables[1]} deben ser de tipo <int> o un numero.")
-                elif self.symbol_table.is_declared(variable):
-                    print(
-                        f"variable {variable} is declared as {self.symbol_table.lookup(variable)['tipo']}")
-                    # check if both variables are the same type
-                    if self.symbol_table.lookup(variable)['tipo'] != self.symbol_table.lookup(variables[0])['tipo']:
+            if variables[0][-1] == "<":
+                # self.enterAssignmentDeclaration(ctx)
+                print("es una asignacion")
+                self.accessSymbol(ctx, variables[0][:-1])
+            else:
+                for variable in variables:
+                    # check if variable is a number
+                    if variable.isnumeric() or variable.isdecimal():
+                        print(f"variable {variable} is a number")
+                    elif (variable.startswith('"') and variable.endswith('"')):
+                        # if both variables are strings then it's ok only if it's a +
                         self.error_listener.errors.append(
-                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variable} es de tipo <{self.symbol_table.lookup(variable)['tipo']}> y {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}>")
-                else:
-                    self.error_listener.errors.append(
-                        f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variable} que no ha sido declarado en esa instancia.")
+                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variables[0]} y {variables[1]} deben ser de tipo <int> o un numero.")
+                    elif self.symbol_table.is_declared(variable):
+                        print(
+                            f"variable {variable} is declared as {self.symbol_table.lookup(variable)['tipo']}")
+                        # check if both variables are the same type
+                        if self.symbol_table.lookup(variable)['tipo'] != self.symbol_table.lookup(variables[0])['tipo']:
+                            self.error_listener.errors.append(
+                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variable} es de tipo <{self.symbol_table.lookup(variable)['tipo']}> y {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}>")
+                    else:
+                        self.error_listener.errors.append(
+                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variable} que no ha sido declarado en esa instancia.")
         elif re.search(r'[\=\>\<\!]', expression.getText()):
             variables = re.split(r'[\=\>\<\!]', expression.getText())
             print("variables", variables)

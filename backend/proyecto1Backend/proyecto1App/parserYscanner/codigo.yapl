@@ -20,17 +20,18 @@ class Main {
     }
 }
 
-class Human inherits Animal{
+class Human inherits Main{
     int hands;
     bool evolved;
-    evolved = true;
+    evolved <- true;
 
     while (evolved != false){
         hands + 1;
-        if (hair == 50) {
-            evolved = true;
+        if (hands == 50) {
+            evolved <- true;
+            return evolved;
         } else {
-            evolved = false;
+            evolved <- false;
         }
         fi
     }

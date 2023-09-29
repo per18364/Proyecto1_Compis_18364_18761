@@ -44,7 +44,7 @@ attributeDeclaration: type ID SEMI;
 assignmentDeclaration: ID ASSIGN expression SEMI;
 
 // Types
-type: INT | STRING_TYPE | TYPE_ID | BOOL;
+type: INT | STRING_TYPE | TYPE_ID | BOOL | VOID;
 
 // Method Declaration
 methodDeclaration: type ID LPAREN parameterList? RPAREN block;
@@ -67,7 +67,7 @@ statement:
 // Assignment Statement assignmentStatement: ID EQUALS expression SEMI;
 
 // Variable Declaration
-variableDeclaration: type ID (EQUALS expression)? SEMI;
+variableDeclaration: type ID (ASSIGN expression)? SEMI;
 
 // If Statement
 ifStatement:
@@ -136,6 +136,7 @@ RETURN: 'return';
 INT: 'int';
 STRING_TYPE: 'string';
 BOOL: 'bool';
+VOID: 'void';
 
 // Lexical Specifications
 ID: [a-z][a-zA-Z0-9_]*;
