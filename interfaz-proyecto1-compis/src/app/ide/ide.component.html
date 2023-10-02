@@ -20,6 +20,7 @@
 <div *ngIf="result">
   <!-- <pre *ngIf="result.tree"> {{result | json}} </pre> -->
   <pre *ngIf="result.message" class="success">{{ result.message | json }}</pre>
+  <pre *ngIf="result.Codigo3Direcciones" class="info"> {{result.Codigo3Direcciones | json}} </pre>
   <div *ngIf="result.errors">
     <pre *ngFor="let err of result.errors" class="error"> {{err}} </pre>
   </div>

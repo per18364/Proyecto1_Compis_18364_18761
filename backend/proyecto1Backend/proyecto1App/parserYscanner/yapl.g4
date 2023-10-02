@@ -21,6 +21,7 @@ GT_EQ: '>=';
 LT_EQ: '<=';
 AND: '&&';
 OR: '||';
+COLON: ':';
 
 // Program
 program: classDeclaration* EOF;
@@ -57,6 +58,7 @@ parameter: type ID;
 statement:
 	// assignmentStatement
 	variableDeclaration
+	| letDeclaration
 	| ifStatement
 	| whileStatement
 	| methodCallStatement
@@ -68,6 +70,12 @@ statement:
 
 // Variable Declaration
 variableDeclaration: type ID (ASSIGN expression)? SEMI;
+
+// Let declaration
+letDeclaration:
+	LET type ID (ASSIGN expression)? (
+		COMMA type ID (ASSIGN expression)?
+	)* IN expression SEMI;
 
 // If Statement
 ifStatement:
@@ -137,6 +145,8 @@ INT: 'int';
 STRING_TYPE: 'string';
 BOOL: 'bool';
 VOID: 'void';
+LET: 'let';
+IN: 'in';
 
 // Lexical Specifications
 ID: [a-z][a-zA-Z0-9_]*;

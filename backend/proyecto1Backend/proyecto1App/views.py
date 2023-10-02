@@ -5,6 +5,7 @@ from .models import Code
 from .parserYscanner.yaplLexer import yaplLexer
 from .parserYscanner.yaplParser import yaplParser
 from .parserYscanner.yaplListener import yaplListener
+from .parserYscanner.yaplVisitor import yaplVisitor
 from antlr4 import *
 from antlr4 import InputStream, CommonTokenStream
 from antlr4.error.ErrorListener import ErrorListener
@@ -65,7 +66,7 @@ class SymbolTable:
         if len(self.scopes) > 1 and self.scopes[-1] == {}:
             self.scopes.pop()
         else:
-            print("Warning: Trying to exit the global scope!")
+            print("Warning: Trying to exit the global scope!\n")
 
     def declare(self, symbol, type, line=None, column=None):
         # print(self.scopes)
@@ -160,7 +161,7 @@ class MyListener(yaplListener):
             print("LLAVE DE APERTURA class")
             self.class_bracket_count += 1
             print(self.class_bracket_count)
-        print(self.symbol_table.scopes)
+        # print(self.symbol_table.scopes)
 
     def exitClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
         print("Saliendo de ClassDeclaration")
@@ -176,7 +177,7 @@ class MyListener(yaplListener):
                 f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta llave de cierre de la clase {class_name}.")
         self.symbol_table.exit_scope()  # Salir del ámbito de la clase
         # self.symbol_table.enter_scope()
-        print(self.symbol_table.scopes)
+        # print(self.symbol_table.scopes)
 
     def enterMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Entrando en MethodDeclaration")
@@ -203,13 +204,13 @@ class MyListener(yaplListener):
         # if ctx.LPAREN().getText() == "(":
         #     print("PARENTESIS DE APERTURA method")
         #     self.block_bracket_count += 1
-        print(self.symbol_table.scopes)
+        # print(self.symbol_table.scopes)
 
     def exitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Saliendo de MethodDeclaration")
         self.method_type = ''
         # self.symbol_table.exit_scope()  # Salir del ámbito del método
-        print(self.symbol_table.scopes)
+        # print(self.symbol_table.scopes)
 
     def enterMethodCallStatement(self, ctx: yaplParser.MethodCallStatementContext):
         print("Entrando en MethodCallStatement")
@@ -287,7 +288,6 @@ class MyListener(yaplListener):
 
     def exitAttributeDeclaration(self, ctx: yaplParser.AttributeDeclarationContext):
         print("Saliendo de AttributeDeclaration")
-    #     self.symbol_table.exit_scope()
 
     def enterAssignmentDeclaration(self, ctx: yaplParser.AssignmentDeclarationContext):
         print("Entrando en AssignmentDeclaration")
@@ -421,7 +421,6 @@ class MyListener(yaplListener):
 
     def exitWhileStatement(self, ctx: yaplParser.WhileStatementContext):
         print("Saliendo de WhileStatement")
-    #     self.symbol_table.exit_scope()
 
     def enterReturnStatement(self, ctx: yaplParser.ReturnStatementContext):
         print("Entrando en ReturnStatement")
@@ -500,6 +499,7 @@ class MyListener(yaplListener):
                                 if self.symbol_table.lookup(expression)['tipo'] != "void":
                                     self.error_listener.errors.append(
                                         f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método es <{self.method_type}> y la expresión es de tipo <{self.symbol_table.lookup(expression)['tipo']}>.")
+                    break
             elif expression.isnumeric():
                 if self.method_type != "int":
                     self.error_listener.errors.append(
@@ -584,6 +584,238 @@ class MyListener(yaplListener):
         print("Saliendo de ExpressionStatement")
         # self.symbol_table.exit_scope()
 
+    def enterLetDeclaration(self, ctx: yaplParser.LetDeclarationContext):
+        print("Entrando en LetDeclaration")
+        for idx, type in enumerate(ctx.type_()):
+            # print(type.getText(), ctx.ID()[idx].getText())
+            self.declareSymbol(ctx, ctx.ID()[idx].getText(), type.getText())
+
+        for exp in ctx.expression():
+            if re.search(r'[\+\-\*\/]', exp.getText()):
+                print(exp.getText())
+                variables = re.split(r'[\+\-\*\/]', exp.getText())
+                print("variables", variables)
+                for variable in variables:
+                    if self.symbol_table.is_declared(variable, current_scope_only=True):
+                        print(
+                            f"variable {variable} is declared as {self.symbol_table.lookup(variable)['tipo']}")
+                        # check if both variables are the same type
+                        if self.symbol_table.lookup(variable)['tipo'] != self.symbol_table.lookup(variables[0])['tipo']:
+                            self.error_listener.errors.append(
+                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variable} es de tipo <{self.symbol_table.lookup(variable)['tipo']}> y {variables[0]} es de tipo <{self.symbol_table.lookup(variables[0])['tipo']}>")
+                    else:
+                        self.error_listener.errors.append(
+                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> Uso de {variable} que no ha sido declarado en esa instancia.")
+
+    def exitLetDeclaration(self, ctx: yaplParser.LetDeclarationContext):
+        print("Saliendo de LetDeclaration")
+
+
+class MyVisitor(yaplVisitor):
+    def __init__(self):
+        self.code = {}  # Lista para almacenar las instrucciones de código intermedio
+        self.temp_count = 0  # Contador para variables temporales
+        self.label_count = 0  # Contador para etiquetas
+        self.class_name = ""
+        self.method_name = ""
+
+    def new_temp(self):
+        # Función para generar un nuevo nombre de variable temporal
+        self.temp_count += 1
+        return f"t{self.temp_count}"
+
+    def new_label(self):
+        # Función para generar un nuevo nombre de etiqueta
+        self.label_count += 1
+        return f"L{self.label_count}"
+
+    def visitClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
+        # print("visitClassDeclaration")
+        self.class_name = ctx.TYPE_ID()[0].getText()
+        self.method_name = ""
+        # print(self.class_name)
+        self.code[self.class_name] = []
+        return self.visitChildren(ctx)
+
+    def visitAttributeDeclaration(self, ctx: yaplParser.AttributeDeclarationContext):
+        # print("visitAttributeDeclaration")
+        var_name = ctx.ID().getText()
+        # print(var_name)
+        if ctx.ID():
+            expression_result = ctx.type_().getText()
+            self.code[self.class_name].append(
+                f"{var_name} = {expression_result}")
+
+    def visitAssignmentDeclaration(self, ctx: yaplParser.AssignmentDeclarationContext):
+        # print("visitAssignmentDeclaration")
+        var_name = ctx.ID().getText()
+        # print(var_name)
+        if ctx.expression():
+            expression_result = ctx.expression().getText()
+            self.code[self.class_name].append(
+                f"{var_name} = {expression_result}")
+
+    def visitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
+        # print("visitMethodDeclaration")
+        if self.method_name != "":
+            self.method_name = ""
+        self.method_name = ctx.ID().getText()
+        # print(self.method_name)
+        self.code[self.class_name].append(
+            {f"{self.class_name}.{self.method_name}:": []})
+        return self.visitChildren(ctx)
+
+    def visitLetDeclaration(self, ctx: yaplParser.LetDeclarationContext):
+        # print("visitLetDeclaration")
+        # print(ctx.getText())
+        for idx, type in enumerate(ctx.type_()):
+            # print(type.getText(), ctx.ID()[idx].getText())
+            self.code[self.class_name].append(
+                f"{ctx.ID()[idx].getText()} = {type.getText()}")
+        self.visitChildren(ctx)
+
+    def visitAdditionExpression(self, ctx: yaplParser.AdditionExpressionContext):
+        # print("visitAdditionExpression")
+        # print(ctx.getText())
+        if self.method_name:
+            left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
+            right = self.visit(ctx.expression(
+                1)) or ctx.expression(1).getText()
+            temp = self.new_temp()
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"{temp} = {left} + {right}")
+            return temp
+        else:
+            left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
+            right = self.visit(ctx.expression(
+                1)) or ctx.expression(1).getText()
+            temp = self.new_temp()
+            self.code[self.class_name].append(
+                f"{temp} = {left} + {right}")
+        return temp
+
+    def visitIfStatement(self, ctx: yaplParser.IfStatementContext):
+        print("visitIfStatement")
+        print(ctx.getText())
+        temp = self.new_temp()
+        end_label = f"end_{self.method_name}"
+        else_block_label = f"{self.new_label()}"
+
+        # Evaluar la expresión y saltar al bloque else si es falsa
+        expression = ctx.expression().getText()
+        if self.method_name != "":
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"{temp} = {expression}")
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"if_false {temp} goto {else_block_label}")
+
+            # Código para el bloque then
+            self.visit(ctx.statement(0))
+            # self.code[self.class_name][-1][f"{self.method_name}:"].append(
+            #     f"goto {end_label}")
+
+            # Etiqueta y código para el bloque else
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"{else_block_label}:")
+            if ctx.statement(1):  # En caso de que exista un bloque else
+                self.visit(ctx.statement(1))
+
+            # Etiqueta para el final del bloque if
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"{end_label}")
+        else:
+            self.code[self.class_name].append(f"{temp} = {expression}")
+            self.code[self.class_name].append(
+                f"if_false {temp} goto {else_block_label}")
+
+            # Código para el bloque then
+            self.visit(ctx.statement(0))
+            # self.code[self.class_name].append(f"goto {end_label}")
+
+            # Etiqueta y código para el bloque else
+            self.code[self.class_name].append(f"{else_block_label}:")
+            if ctx.statement(1):  # En caso de que exista un bloque else
+                self.visit(ctx.statement(1))
+
+    def visitExpressionStatement(self, ctx: yaplParser.ExpressionStatementContext):
+        print("visitExpressionStatement")
+        if self.method_name:
+            expression = ctx.expression().getText()
+            print(expression)
+            temp = self.new_temp()
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"{temp} = {expression}")
+        else:
+            expression = ctx.expression().getText()
+            print(expression)
+            temp = self.new_temp()
+            self.code[self.class_name].append(f"{temp} = {expression}")
+
+    def visitVariableDeclaration(self, ctx: yaplParser.VariableDeclarationContext):
+        print("visitVariableDeclaration")
+        var_name = ctx.ID().getText()
+        print(var_name)
+        if ctx.ID():
+            expression_result = ctx.type_().getText()
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"{var_name} = {expression_result}")
+
+    def visitReturnStatement(self, ctx: yaplParser.ReturnStatementContext):
+        print("visitReturnStatement")
+        print(ctx.getText())
+        if self.method_name:
+            if ctx.expression():
+                expression = ctx.expression().getText()
+                print(expression)
+                self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                    f"return {expression}")
+            else:
+                self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                    f"return {ctx.VOID().getText()}")
+        else:
+            if ctx.expression():
+                expression = ctx.expression().getText()
+                print(expression)
+                self.code[self.class_name].append(f"return {expression}")
+            else:
+                self.code[self.class_name].append(
+                    f"return {ctx.VOID().getText()}")
+
+    def visitWhileStatement(self, ctx: yaplParser.WhileStatementContext):
+        print("visitWhileStatement")
+        print(ctx.getText())
+        temp = self.new_temp()
+        end_label = "end_while"
+        while_label = f"{self.new_label()}"
+
+        # Evaluar la expresión y saltar al bloque else si es falsa
+        expression = ctx.expression().getText()
+        if self.method_name != "":
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"{temp} = {expression}")
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"while {temp} goto {end_label}")
+
+            # Código para el bloque then
+            self.visit(ctx.statement())
+
+            # Etiqueta y código para el bloque else
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"goto {while_label}")
+            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+                f"{end_label}:")
+        else:
+            self.code[self.class_name].append(f"{temp} = {expression}")
+            self.code[self.class_name].append(
+                f"while not {temp}")
+
+            # Código para el bloque then
+            self.visit(ctx.statement())
+
+            # Etiqueta y código para el bloque else
+            self.code[self.class_name].append(f"goto {while_label}")
+            self.code[self.class_name].append(f"{end_label}:")
+
 
 class AnalyzeCodeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -611,8 +843,12 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
 
             tree = parser.program()
             my_listener = MyListener(errorListener)
-            walker = ParseTreeWalker()
-            walker.walk(my_listener, tree)
+            # walker = ParseTreeWalker()
+            # walker.walk(my_listener, tree)
+
+            myVisitor = MyVisitor()
+            result = myVisitor.visit(tree)
+
             visualize_tree(
                 tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
             if errorListener.errors:
@@ -623,7 +859,8 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
                 tree_str = tree.toStringTree(recog=parser)
                 # tree = parse_tree(tree_str)
                 # return Response({'tree': tree_str, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
-                return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
+                # return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'symbol_table': my_listener.symbol_table.scopes, 'Codigo3Direcciones': myVisitor.code}, status=status.HTTP_200_OK)
+                return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'Codigo3Direcciones': myVisitor.code}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

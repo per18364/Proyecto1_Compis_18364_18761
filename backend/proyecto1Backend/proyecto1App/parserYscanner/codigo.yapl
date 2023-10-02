@@ -3,6 +3,7 @@ class Main {
     string name;
     int hair;
     age <- 5;
+    let int a, int b, int c in a + b + c;
     
     int bark() {
         if (age < 10) {
@@ -34,5 +35,9 @@ class Human inherits Main{
             evolved <- false;
         }
         fi
+    }
+
+    void getEvo(){
+        return evolved;
     }
 }

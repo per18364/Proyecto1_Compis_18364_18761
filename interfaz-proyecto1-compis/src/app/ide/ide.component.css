@@ -102,6 +102,10 @@ iframe {
   background-color: #28a745;
 }
 
+.info {
+  background-color: #00e0b0;
+}
+
 .error {
   background-color: #dc3545;
   color: white;

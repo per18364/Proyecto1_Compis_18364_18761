@@ -107,6 +107,15 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#letDeclaration.
+    def enterLetDeclaration(self, ctx:yaplParser.LetDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#letDeclaration.
+    def exitLetDeclaration(self, ctx:yaplParser.LetDeclarationContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#ifStatement.
     def enterIfStatement(self, ctx:yaplParser.IfStatementContext):
         pass
