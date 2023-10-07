@@ -41,3 +41,38 @@ class Human inherits Main{
         return evolved;
     }
 }
+
+//////////////////////////////
+class Main inherits Object{
+    int age;
+    string name;
+    int hair;
+    age <- 5;
+    let int a, int b, int c in a + b + c;
+    Human humano;
+    humano <- new Human;
+
+    int eyes;
+    eyes <- humano.getEyes();
+    
+    int bark() {
+        if (age < 10) {
+            bool beso;
+            age + 30;
+            return 0;
+        } else {
+            return 1;
+        }
+        fi
+    }
+    
+    int getAge() {
+        return 1;
+    }
+}
+
+class Human {
+    int getEyes() {
+        return 69;
+    }
+}

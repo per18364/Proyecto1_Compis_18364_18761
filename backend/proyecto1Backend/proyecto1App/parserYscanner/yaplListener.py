@@ -341,6 +341,15 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#voidLiteralExpression.
+    def enterVoidLiteralExpression(self, ctx:yaplParser.VoidLiteralExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#voidLiteralExpression.
+    def exitVoidLiteralExpression(self, ctx:yaplParser.VoidLiteralExpressionContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#equalityExpression.
     def enterEqualityExpression(self, ctx:yaplParser.EqualityExpressionContext):
         pass

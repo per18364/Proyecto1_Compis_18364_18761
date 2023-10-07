@@ -123,7 +123,8 @@ expression:
 	| INTEGER											# integerLiteralExpression
 	| STRING											# stringLiteralExpression
 	| TRUE												# trueLiteralExpression
-	| FALSE												# falseLiteralExpression;
+	| FALSE												# falseLiteralExpression
+	| VOID												# voidLiteralExpression;
 
 // Reserved Words
 TRUE: 'true';

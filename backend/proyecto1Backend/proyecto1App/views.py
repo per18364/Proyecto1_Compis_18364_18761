@@ -43,16 +43,16 @@ class CustomErrorListener(ErrorListener):
             self.errors.append(
                 f"ERROR léxico en línea {line}, columna {column}: Carácter inesperado -> '{err}'")
         else:
-            if offendingSymbol.text not in self.table.scopes[-1]:
-                # self.errors.append(
-                #     f"ERROR semántico en línea {line}, columna {column}: {offendingSymbol.text} no ha sido declarado")
-                print(
-                    f"ERROR semántico en línea {line}, columna {column}: {offendingSymbol.text} no ha sido declarado")
-            else:
-                # self.errors.append(
-                #     f"ERROR sintáctico en línea {line}, columna {column}: {msg}")
-                print(
-                    f"ERROR sintáctico en línea {line}, columna {column}: {msg}")
+            # if offendingSymbol.text not in self.table.scopes[-1]:
+            #     # self.errors.append(
+            #     #     f"ERROR semántico en línea {line}, columna {column}: {offendingSymbol.text} no ha sido declarado")
+            #     print(
+            #         f"ERROR semántico en línea {line}, columna {column}: {offendingSymbol.text} no ha sido declarado")
+            # else:
+            #     # self.errors.append(
+            #     #     f"ERROR sintáctico en línea {line}, columna {column}: {msg}")
+            print(
+                f"ERROR sintáctico en línea {line}, columna {column}: {msg}")
 
 
 class SymbolTable:
@@ -89,6 +89,7 @@ class SymbolTable:
         return any(symbol in scope for scope in self.scopes)
 
 
+# IMPLEMENTAR IO**, ARREGLAR COMO SE DEFINEN LAS COSAS** Y ERRORES SINTÁCTICOS
 class MyListener(yaplListener):
     def __init__(self, error_listener):
         self.symbol_table = SymbolTable()
@@ -137,7 +138,6 @@ class MyListener(yaplListener):
     def enterClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
         print("\nEntrando en ClassDeclaration")
         self.symbol_table.enter_scope()  # Nuevo ámbito para la clase
-        print(ctx.getText())
         class_name = ctx.TYPE_ID()[0].getText()
         self.class_name = class_name
         self.class_count += 1
@@ -146,12 +146,24 @@ class MyListener(yaplListener):
                 f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> La clase principal debe llamarse Main.")
         self.declareSymbol(ctx, class_name, "class")
         if len(ctx.TYPE_ID()) > 1:
-            if class_name == "Main":
-                self.error_listener.errors.append(
-                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> La clase principal Main no puede heredar de otra clase.")
             inherits = ctx.TYPE_ID()[1].getText()
             print(inherits)
-            if self.symbol_table.is_declared(inherits):
+            if class_name == "Main" and (inherits != "IO" and inherits != "Object"):
+                self.error_listener.errors.append(
+                    f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> La clase principal Main no puede heredar de otra clase que no sea IO u Object.")
+
+            if inherits == "IO":
+                print("hereda de IO")
+                self.declareSymbol(ctx, "out_string", "method: self")
+                self.declareSymbol(ctx, "out_int", "method: self")
+                self.declareSymbol(ctx, "in_string", "method: string")
+                self.declareSymbol(ctx, "in_int", "method: int")
+            elif inherits == "Object":
+                print("hereda de Object")
+                self.declareSymbol(ctx, "abort", "method: Object")
+                self.declareSymbol(ctx, "type_name", "method: string")
+                self.declareSymbol(ctx, "copy", "method: self")
+            elif self.symbol_table.is_declared(inherits):
                 print(f"{inherits} es una clase")
             else:
                 print(f"{inherits} no es una clase")
@@ -173,8 +185,8 @@ class MyListener(yaplListener):
             print(self.class_bracket_count)
         if self.class_bracket_count != 0:
             print("FALTA UNA LLAVE DE CIERRE")
-            self.error_listener.errors.append(
-                f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta llave de cierre de la clase {class_name}.")
+            # self.error_listener.errors.append(
+            #     f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta llave de cierre de la clase {class_name}.")
         self.symbol_table.exit_scope()  # Salir del ámbito de la clase
         # self.symbol_table.enter_scope()
         # print(self.symbol_table.scopes)
@@ -253,11 +265,20 @@ class MyListener(yaplListener):
         # print(self.symbol_table.scopes)
         self.inside_block = True
         self.block_depth += 1
+        print(ctx.getText())
+        if ctx.LBRACE().getText() != "{":
+            print("FALTA UNA LLAVE DE APERTURA")
+            self.error_listener.errors.append(
+                f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta llave de apertura del bloque.")
 
     def exitBlock(self, ctx: yaplParser.BlockContext):
         print("Saliendo de Block")
         self.inside_block = False
         self.block_depth -= 1
+        if ctx.RBRACE().getText() != "}":
+            print("FALTA UNA LLAVE DE CIERRE")
+            self.error_listener.errors.append(
+                f"ERROR sintáctico en línea {ctx.start.line}:{ctx.start.column} -> Falta llave de cierre del bloque.")
         # self.symbol_table.exit_scope()  # Salir del ámbito del bloque
         # print(self.symbol_table.scopes)
 
@@ -284,7 +305,9 @@ class MyListener(yaplListener):
         type_ctx = ctx.getChild(0)
         type_text = type_ctx.getText()  # Esto devuelve el texto del tipo
         self.declareSymbol(ctx, symbol, type_text)
-        # self.symbol_table.enter_scope()  # Nuevo ámbito para el atributo
+        print("sexo", ctx.SEMI().getText())
+        if ctx.SEMI().getText() != ";":
+            print("FALTA UN PUNTO Y COMA")
 
     def exitAttributeDeclaration(self, ctx: yaplParser.AttributeDeclarationContext):
         print("Saliendo de AttributeDeclaration")
@@ -303,7 +326,6 @@ class MyListener(yaplListener):
         print("Entrando en IfStatement")
         expression = ctx.expression().getText()
         print(expression)
-        # check if expression contains ==, !=, <, >, <=, >=
         operators = ["==", "!=", "<", ">", "<=", ">="]
         for operator in operators:
             if operator in expression:
@@ -546,7 +568,11 @@ class MyListener(yaplListener):
                     elif (variable.startswith('"') and variable.endswith('"')):
                         # if both variables are strings then it's ok only if it's a +
                         self.error_listener.errors.append(
-                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variables[0]} y {variables[1]} deben ser de tipo <int> o un numero.")
+                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variables[0]} es de tipo <int> y {variables[1]}  es de tipo <string>.")
+                    elif variable == "true" or variable == "false":
+                        # if both variables are booleans then it's ok only if it's a ==
+                        self.error_listener.errors.append(
+                            f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> No se puede operar entre tipos de datos diferentes. {variables[0]} es de tipo <int> y {variables[1]} es de tipo <bool>.")
                     elif self.symbol_table.is_declared(variable):
                         print(
                             f"variable {variable} is declared as {self.symbol_table.lookup(variable)['tipo']}")
@@ -611,7 +637,7 @@ class MyListener(yaplListener):
         print("Saliendo de LetDeclaration")
 
 
-class MyVisitor(yaplVisitor):
+class MyVisitor(yaplVisitor):  # ARREGLAR PARA QUE SALGA BIEN MI C3D Y LA TABLA DE CUADRUPLOS
     def __init__(self):
         self.code = {}  # Lista para almacenar las instrucciones de código intermedio
         self.temp_count = 0  # Contador para variables temporales
@@ -649,11 +675,9 @@ class MyVisitor(yaplVisitor):
     def visitAssignmentDeclaration(self, ctx: yaplParser.AssignmentDeclarationContext):
         # print("visitAssignmentDeclaration")
         var_name = ctx.ID().getText()
-        # print(var_name)
-        if ctx.expression():
-            expression_result = ctx.expression().getText()
-            self.code[self.class_name].append(
-                f"{var_name} = {expression_result}")
+        expression_result = ctx.expression().getText()
+        self.code[self.class_name].append(
+            f"{var_name} = {expression_result}")
 
     def visitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         # print("visitMethodDeclaration")
@@ -675,23 +699,18 @@ class MyVisitor(yaplVisitor):
         self.visitChildren(ctx)
 
     def visitAdditionExpression(self, ctx: yaplParser.AdditionExpressionContext):
-        # print("visitAdditionExpression")
-        # print(ctx.getText())
+        print("visitAdditionExpression")
+        print(ctx.getText())
+        left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
+        right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
+        temp = self.new_temp()
+
         if self.method_name:
-            left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
-            right = self.visit(ctx.expression(
-                1)) or ctx.expression(1).getText()
-            temp = self.new_temp()
-            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
-                f"{temp} = {left} + {right}")
-            return temp
+            target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
         else:
-            left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
-            right = self.visit(ctx.expression(
-                1)) or ctx.expression(1).getText()
-            temp = self.new_temp()
-            self.code[self.class_name].append(
-                f"{temp} = {left} + {right}")
+            target_code = self.code[self.class_name]
+
+        target_code.append(f"{temp} = {left} + {right}")
         return temp
 
     def visitIfStatement(self, ctx: yaplParser.IfStatementContext):
@@ -699,43 +718,24 @@ class MyVisitor(yaplVisitor):
         print(ctx.getText())
         temp = self.new_temp()
         end_label = f"end_{self.method_name}"
-        else_block_label = f"{self.new_label()}"
+        else_block_label = self.new_label()
+        condition_temp = self.visit(
+            ctx.expression()) or ctx.expression().getText()
 
-        # Evaluar la expresión y saltar al bloque else si es falsa
-        expression = ctx.expression().getText()
-        if self.method_name != "":
-            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
-                f"{temp} = {expression}")
-            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
-                f"if_false {temp} goto {else_block_label}")
-
-            # Código para el bloque then
-            self.visit(ctx.statement(0))
-            # self.code[self.class_name][-1][f"{self.method_name}:"].append(
-            #     f"goto {end_label}")
-
-            # Etiqueta y código para el bloque else
-            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
-                f"{else_block_label}:")
-            if ctx.statement(1):  # En caso de que exista un bloque else
-                self.visit(ctx.statement(1))
-
-            # Etiqueta para el final del bloque if
-            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
-                f"{end_label}")
+        if self.method_name:
+            target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
         else:
-            self.code[self.class_name].append(f"{temp} = {expression}")
-            self.code[self.class_name].append(
-                f"if_false {temp} goto {else_block_label}")
+            target_code = self.code[self.class_name]
 
-            # Código para el bloque then
-            self.visit(ctx.statement(0))
-            # self.code[self.class_name].append(f"goto {end_label}")
-
-            # Etiqueta y código para el bloque else
-            self.code[self.class_name].append(f"{else_block_label}:")
-            if ctx.statement(1):  # En caso de que exista un bloque else
-                self.visit(ctx.statement(1))
+        target_code.append(f"{temp} = {condition_temp}")
+        target_code.append(
+            f"if_false {temp} goto {else_block_label}")
+        self.visit(ctx.statement(0))
+        target_code.append(f"goto {end_label}")
+        target_code.append(f"{else_block_label}:")
+        if ctx.statement(1):  # En caso de que exista un bloque else
+            self.visit(ctx.statement(1))
+        target_code.append(f"{end_label}")
 
     def visitExpressionStatement(self, ctx: yaplParser.ExpressionStatementContext):
         print("visitExpressionStatement")
@@ -771,7 +771,7 @@ class MyVisitor(yaplVisitor):
                     f"return {expression}")
             else:
                 self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
-                    f"return {ctx.VOID().getText()}")
+                    f"return")
         else:
             if ctx.expression():
                 expression = ctx.expression().getText()
@@ -803,18 +803,18 @@ class MyVisitor(yaplVisitor):
             self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
                 f"goto {while_label}")
             self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
-                f"{end_label}:")
+                f"{end_label}")
         else:
             self.code[self.class_name].append(f"{temp} = {expression}")
             self.code[self.class_name].append(
-                f"while not {temp}")
+                f"while {temp}")
 
             # Código para el bloque then
             self.visit(ctx.statement())
 
             # Etiqueta y código para el bloque else
             self.code[self.class_name].append(f"goto {while_label}")
-            self.code[self.class_name].append(f"{end_label}:")
+            self.code[self.class_name].append(f"{end_label}")
 
 
 class AnalyzeCodeSerializer(serializers.ModelSerializer):
@@ -843,11 +843,11 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
 
             tree = parser.program()
             my_listener = MyListener(errorListener)
-            # walker = ParseTreeWalker()
-            # walker.walk(my_listener, tree)
+            walker = ParseTreeWalker()
+            walker.walk(my_listener, tree)
 
-            myVisitor = MyVisitor()
-            result = myVisitor.visit(tree)
+            # myVisitor = MyVisitor()
+            # result = myVisitor.visit(tree)
 
             visualize_tree(
                 tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
@@ -856,11 +856,12 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
                 #     tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
                 return Response({'errors': errorListener.errors}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                tree_str = tree.toStringTree(recog=parser)
+                # tree_str = tree.toStringTree(recog=parser)
                 # tree = parse_tree(tree_str)
                 # return Response({'tree': tree_str, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
+                return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
                 # return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'symbol_table': my_listener.symbol_table.scopes, 'Codigo3Direcciones': myVisitor.code}, status=status.HTTP_200_OK)
-                return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'Codigo3Direcciones': myVisitor.code}, status=status.HTTP_200_OK)
+                # return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'Codigo3Direcciones': myVisitor.code}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

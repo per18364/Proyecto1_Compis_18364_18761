@@ -158,6 +158,10 @@ class yaplVisitor(ParseTreeVisitor):
     def visitIntegerLiteralExpression(self, ctx: yaplParser.IntegerLiteralExpressionContext):
         return self.visitChildren(ctx)
 
+    # Visit a parse tree produced by yaplParser#voidLiteralExpression.
+    def visitVoidLiteralExpression(self, ctx: yaplParser.VoidLiteralExpressionContext):
+        return self.visitChildren(ctx)
+
     # Visit a parse tree produced by yaplParser#equalityExpression.
     def visitEqualityExpression(self, ctx: yaplParser.EqualityExpressionContext):
         return self.visitChildren(ctx)
