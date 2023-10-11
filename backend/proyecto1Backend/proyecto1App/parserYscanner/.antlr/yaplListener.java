@@ -197,6 +197,18 @@ public interface yaplListener extends ParseTreeListener {
 	 */
 	void exitBlock(yaplParser.BlockContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code classMethodCallExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassMethodCallExpression(yaplParser.ClassMethodCallExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code classMethodCallExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassMethodCallExpression(yaplParser.ClassMethodCallExpressionContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code additionExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
 	 * @param ctx the parse tree
@@ -245,18 +257,6 @@ public interface yaplListener extends ParseTreeListener {
 	 */
 	void exitIdentifierExpression(yaplParser.IdentifierExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code methodCallExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterMethodCallExpression(yaplParser.MethodCallExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code methodCallExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitMethodCallExpression(yaplParser.MethodCallExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code assignmentExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
 	 * @param ctx the parse tree
@@ -280,6 +280,18 @@ public interface yaplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNotExpression(yaplParser.NotExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code selfLiteralExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterSelfLiteralExpression(yaplParser.SelfLiteralExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code selfLiteralExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitSelfLiteralExpression(yaplParser.SelfLiteralExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code multiplicationExpression}
 	 * labeled alternative in {@link yaplParser#expression}.

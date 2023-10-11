@@ -45,7 +45,7 @@ attributeDeclaration: type ID SEMI;
 assignmentDeclaration: ID ASSIGN expression SEMI;
 
 // Types
-type: INT | STRING_TYPE | TYPE_ID | BOOL | VOID;
+type: INT | STRING_TYPE | TYPE_ID | BOOL | VOID | SELF_TYPE;
 
 // Method Declaration
 methodDeclaration: type ID LPAREN parameterList? RPAREN block;
@@ -114,12 +114,12 @@ expression:
 	| expression ASSIGN expression						# assignmentExpression
 	| expression AND expression							# andExpression
 	| expression OR expression							# orExpression
-	| expression DOT ID LPAREN expressionList? RPAREN	# methodCallExpression
+	| expression DOT ID LPAREN expressionList? RPAREN	# classMethodCallExpression
 	| NEW TYPE_ID										# newExpression
 	| NOT expression									# notExpression
 	| MINUS expression									# unaryMinusExpression
-	| ID LPAREN expressionList? RPAREN					# methodCallExpression
 	| ID												# identifierExpression
+	| SELF												# selfLiteralExpression
 	| INTEGER											# integerLiteralExpression
 	| STRING											# stringLiteralExpression
 	| TRUE												# trueLiteralExpression

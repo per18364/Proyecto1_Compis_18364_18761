@@ -179,6 +179,15 @@ class yaplListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by yaplParser#classMethodCallExpression.
+    def enterClassMethodCallExpression(self, ctx:yaplParser.ClassMethodCallExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#classMethodCallExpression.
+    def exitClassMethodCallExpression(self, ctx:yaplParser.ClassMethodCallExpressionContext):
+        pass
+
+
     # Enter a parse tree produced by yaplParser#additionExpression.
     def enterAdditionExpression(self, ctx:yaplParser.AdditionExpressionContext):
         pass
@@ -215,15 +224,6 @@ class yaplListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by yaplParser#methodCallExpression.
-    def enterMethodCallExpression(self, ctx:yaplParser.MethodCallExpressionContext):
-        pass
-
-    # Exit a parse tree produced by yaplParser#methodCallExpression.
-    def exitMethodCallExpression(self, ctx:yaplParser.MethodCallExpressionContext):
-        pass
-
-
     # Enter a parse tree produced by yaplParser#assignmentExpression.
     def enterAssignmentExpression(self, ctx:yaplParser.AssignmentExpressionContext):
         pass
@@ -239,6 +239,15 @@ class yaplListener(ParseTreeListener):
 
     # Exit a parse tree produced by yaplParser#notExpression.
     def exitNotExpression(self, ctx:yaplParser.NotExpressionContext):
+        pass
+
+
+    # Enter a parse tree produced by yaplParser#selfLiteralExpression.
+    def enterSelfLiteralExpression(self, ctx:yaplParser.SelfLiteralExpressionContext):
+        pass
+
+    # Exit a parse tree produced by yaplParser#selfLiteralExpression.
+    def exitSelfLiteralExpression(self, ctx:yaplParser.SelfLiteralExpressionContext):
         pass
 
 

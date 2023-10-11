@@ -20,7 +20,28 @@
 <div *ngIf="result">
   <!-- <pre *ngIf="result.tree"> {{result | json}} </pre> -->
   <pre *ngIf="result.message" class="success">{{ result.message | json }}</pre>
-  <pre *ngIf="result.Codigo3Direcciones" class="info"> {{result.Codigo3Direcciones | json}} </pre>
+  <div *ngIf="!result.errors" class="c3d">
+    <pre *ngIf="result.Codigo3Direcciones" class="info"> {{result.Codigo3Direcciones | json}} </pre>
+    <!-- <pre *ngIf="result.Cuadruplos" class="info"> {{result.Cuadruplos | json}} </pre> -->
+    <table *ngIf="result.Cuadruplos" class="info-table">
+      <thead>
+        <tr>
+          <th>Operator</th>
+          <th>Arg1</th>
+          <th>Arg2</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cuadruplo of result.Cuadruplos">
+          <td>{{cuadruplo[0]}}</td>
+          <td>{{cuadruplo[1]}}</td>
+          <td>{{cuadruplo[2]}}</td>
+          <td>{{cuadruplo[3]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div *ngIf="result.errors">
     <pre *ngFor="let err of result.errors" class="error"> {{err}} </pre>
   </div>

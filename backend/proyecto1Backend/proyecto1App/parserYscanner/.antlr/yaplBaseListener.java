@@ -244,6 +244,18 @@ public class yaplBaseListener implements yaplListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterClassMethodCallExpression(yaplParser.ClassMethodCallExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClassMethodCallExpression(yaplParser.ClassMethodCallExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAdditionExpression(yaplParser.AdditionExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -292,18 +304,6 @@ public class yaplBaseListener implements yaplListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMethodCallExpression(yaplParser.MethodCallExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMethodCallExpression(yaplParser.MethodCallExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterAssignmentExpression(yaplParser.AssignmentExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -323,6 +323,18 @@ public class yaplBaseListener implements yaplListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNotExpression(yaplParser.NotExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSelfLiteralExpression(yaplParser.SelfLiteralExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSelfLiteralExpression(yaplParser.SelfLiteralExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
