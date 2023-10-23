@@ -38,7 +38,7 @@ class CustomErrorListener(ErrorListener):
         # Personalizar el mensaje de error para el análisis sintáctico
         # print(msg)
         # print(offendingSymbol.text)
-
+        print(msg)
         if "extraneous input" in msg:
             print(
                 f"Error en la línea {line}, {offendingSymbol.text}; Entrada no esperada.")
@@ -48,10 +48,10 @@ class CustomErrorListener(ErrorListener):
         elif "missing ';' at" in msg:
             print(f"Error en la línea {line}, Falta ';' en la entrada.")
         elif "mismatched input" in msg:
-            # print(
-            # f"Error en la línea {line}, Entrada {offendingSymbol.text} no coincide con lo esperado.")
-            self.errors.append(
-                f"ERROR sintáctico en línea {line}, columna {column}: Entrada {offendingSymbol.text} no coincide con lo esperado.")
+            print(
+                f"Error en la línea {line}, Entrada {offendingSymbol.text} no coincide con lo esperado.")
+            # self.errors.append(
+            #     f"ERROR sintáctico en línea {line}, columna {column}: Entrada {offendingSymbol.text} no coincide con lo esperado.")
         else:
             print(
                 f"Error de sintaxis en la línea {line}, posición {column}: {msg}")
@@ -133,9 +133,20 @@ class MyListener(yaplListener):
         # Si symbol_type no es None, estamos declarando el símbolo
         print(symbol_type, symbol)
         if symbol_type:
+            # print(self.method_params)
             if self.symbol_table.is_declared(symbol, current_scope_only=False):
-                self.error_listener.errors.append(
-                    f"ERROR semántico en línea {line}: {column}. {symbol} ya ha sido declarado como <{symbol_type}>.")
+                for key, value in self.method_params.items():
+                    # print(key, value)
+                    if symbol in value['parametros']:
+                        print("ya ha sido declarado pero como parametro")
+                        print(f"Declarando {symbol} como {symbol_type}")
+                        self.symbol_table.declare(
+                            symbol, symbol_type, line, column)
+                        self.error_listener.errors = []
+                        break
+                    else:
+                        self.error_listener.errors.append(
+                            f"ERROR semántico en línea {line}: {column}. {symbol} ya ha sido declarado como <{symbol_type}>.")
             else:
                 print(f"Declarando {symbol} como {symbol_type}")
                 self.symbol_table.declare(
@@ -162,15 +173,22 @@ class MyListener(yaplListener):
 
     def exitProgram(self, ctx: yaplParser.ProgramContext):
         print("Saliendo de Program\n")
-        is_main = False
+        is_main_class = False
+        is_main_method = False
         for scope in self.symbol_table.scopes:
             for key, value in scope.items():
                 if key == "Main":
                     # print("Main encontrado")
-                    is_main = True
-        if not is_main:
+                    is_main_class = True
+                elif key == "main":
+                    # print("main encontrado")
+                    is_main_method = True
+        if not is_main_class:
             self.error_listener.errors.append(
                 "ERROR semántico -> No se ha encontrado la clase Main.")
+        if not is_main_method:
+            self.error_listener.errors.append(
+                "ERROR semántico -> No se ha encontrado el método main.")
 
         # self.symbol_table.exit_scope()
         # print(self.symbol_table.scopes)
@@ -249,17 +267,17 @@ class MyListener(yaplListener):
                            method_type)
         self.method_type = method_type
         params = ctx.parameterList()
+        self.method_params[method_name] = {
+            'tipo': method_type, 'parametros': {}}
         if params:
             print(ctx.parameterList().getText())
             for param in params.parameter():
                 param_name = param.ID().getText()
                 param_type = param.getChild(0).getText()
+                print(param_name, param_type, "32")
+                self.method_params[method_name]['parametros'][param_name] = param_type
                 self.declareSymbol(ctx, param_name, param_type)
-                self.method_params[method_name] = {
-                    'tipo': method_type, 'parametros': {param_name: param_type}}
-        else:
-            self.method_params[method_name] = {
-                'tipo': method_type, 'parametros': {}}
+                print(self.method_params)
 
     def exitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("Saliendo de MethodDeclaration")
@@ -327,7 +345,31 @@ class MyListener(yaplListener):
                         elif params:
                             # print(ctx.expressionList().getText())
                             for param in params.expression():
-                                if param.ID():
+                                if param.getText().isnumeric():
+                                    print("parametro numerico")
+                                    for key, value in self.method_params[method_name]['parametros'].items():
+                                        if value == "int":
+                                            print("parametro correcto")
+                                        else:
+                                            self.error_listener.errors.append(
+                                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método <{method_name}> es <{value}> y se le está pasando un parametro <{param.getText()}> tipo <int>.")
+                                elif param.getText().startswith('"') and param.getText().endswith('"'):
+                                    print("parametro string")
+                                    for key, value in self.method_params[method_name]['parametros'].items():
+                                        if value == "string":
+                                            print("parametro correcto")
+                                        else:
+                                            self.error_listener.errors.append(
+                                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método <{method_name}> es <{value}> y se le está pasando un parametro <{param.getText()}> tipo <string>.")
+                                elif param.getText() == "true" or param.getText() == "false":
+                                    print("parametro bool")
+                                    for key, value in self.method_params[method_name]['parametros'].items():
+                                        if value == "bool":
+                                            print("parametro correcto")
+                                        else:
+                                            self.error_listener.errors.append(
+                                                f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método <{method_name}> es <{value}> y se le está pasando un parametro <{param.getText()}> tipo <bool>.")
+                                elif param.ID():
                                     param_name = param.ID().getText()
                                     print("name", param_name)
                                     param_type = self.symbol_table.lookup(param_name)[
@@ -466,8 +508,8 @@ class MyListener(yaplListener):
         else:
             type_ctx = ctx.type_().getText()
             name = ctx.ID().getText()
-            if ctx.expression():
-                expression = ctx.expression().getText()
+            if ctx.statement():
+                expression = ctx.statement().getText()
                 if expression.isnumeric() and type_ctx != "int":
                     self.error_listener.errors.append(
                         f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> {name} es de tipo {type_ctx} pero se le está asignando un valor de tipo int.")
@@ -849,6 +891,7 @@ class MyVisitor(yaplVisitor):
         self.cuadruplos = []
         self.mem_sizes = {}
         self.current_mem_size = 0
+        self.call = False
 
     def reset_current_mem_size(self):
         self.current_mem_size = 0
@@ -858,6 +901,8 @@ class MyVisitor(yaplVisitor):
         if self.method_name:
             key = f"{self.class_name}.{self.method_name}"
             self.mem_sizes[key] += self.current_mem_size
+            # print(self.code[self.class_name])
+            # print(self.mem_sizes, key, self.mem_sizes[key])
             self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"][0] = f"BeginFuc_{self.mem_sizes[key]}"
         else:
             self.mem_sizes[self.class_name] += self.current_mem_size
@@ -942,13 +987,13 @@ class MyVisitor(yaplVisitor):
         self.visitChildren(ctx)
         self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
             "EndFunc_")
+        self.method_name = ""
 
     def visitMethodCallStatement(self, ctx: yaplParser.MethodCallStatementContext):
         print("visitMethodCallStatement")
-        # print(ctx.getText())
+        print(ctx.getText())
         method_name = ctx.ID().getText()
         if self.method_name:
-
             target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
         else:
             target_code = self.code[self.class_name]
@@ -966,8 +1011,12 @@ class MyVisitor(yaplVisitor):
                     ('PUSHPARAM', temp, '-', '-'))
             self.cuadruplos.append(('CALL', method_name, '-', '-'))
 
-        target_code.append(
-            f"LCall {method_name}()")
+        if self.call:
+            self.call = False
+            return f"LCall {method_name}()"
+        else:
+            target_code.append(
+                f"LCall {method_name}()")
 
     def visitLetDeclaration(self, ctx: yaplParser.LetDeclarationContext):
         # print("visitLetDeclaration")
@@ -1082,17 +1131,7 @@ class MyVisitor(yaplVisitor):
 
     def visitExpressionStatement(self, ctx: yaplParser.ExpressionStatementContext):
         print("visitExpressionStatement")
-        # if self.method_name:
-        #     expression = ctx.expression().getText()
-        #     print(expression)
-        #     temp = self.new_temp()
-        #     self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
-        #         f"{temp} = {expression}")
-        # else:
-        #     expression = ctx.expression().getText()
-        #     print(expression)
-        #     temp = self.new_temp()
-        #     self.code[self.class_name].append(f"{temp} = {expression}")
+        print(ctx.expression().getText())
         self.visit(ctx.expression())
 
     def visitGreaterThanExpression(self, ctx: yaplParser.GreaterThanExpressionContext):
@@ -1168,6 +1207,7 @@ class MyVisitor(yaplVisitor):
         print(ctx.getText())
         left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
+        # print(left, right)
 
         if self.method_name:
             target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
@@ -1178,20 +1218,31 @@ class MyVisitor(yaplVisitor):
 
     def visitVariableDeclaration(self, ctx: yaplParser.VariableDeclarationContext):
         print("visitVariableDeclaration")
+        print(ctx.getText())
         var_name = ctx.ID().getText()
         print(var_name)
         expression_result = ctx.type_().getText()
-        if ctx.expression():
-            self.code[self.class_name].append(
+        if self.method_name:
+            target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
+        else:
+            target_code = self.code[self.class_name]
+
+        if ctx.statement():
+            target_code.append(
                 f"{var_name} = {expression_result}")
-            self.code[self.class_name].append(
-                f"{var_name} = {ctx.expression().getText()}")
             self.cuadruplos.append(
                 ('ASSIGN', expression_result, '-', var_name))
+            if re.search(r'[\+\-\*\/]', ctx.statement().getText()) or re.search(r'[(]', ctx.statement().getText()):
+                self.call = True
+                res = self.visit(ctx.statement())
+            else:
+                res = ctx.statement().getText()
+            target_code.append(
+                f"{var_name} = {res}")
             self.cuadruplos.append(
-                ('<-', var_name, '-', ctx.expression().getText()))
+                ('<-', var_name, '-', res))
         else:
-            self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
+            target_code.append(
                 f"{var_name} = {expression_result}")
             self.cuadruplos.append(
                 ('ASSIGN', expression_result, '-', var_name))
@@ -1204,6 +1255,8 @@ class MyVisitor(yaplVisitor):
         if self.method_name:
             if ctx.expression():
                 expression = ctx.expression().getText()
+                # print(self.class_name, self.method_name)
+                # print(self.code[self.class_name])
                 # print(expression)
                 self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
                     f"return {expression}")
@@ -1228,8 +1281,6 @@ class MyVisitor(yaplVisitor):
         print(ctx.getText())
         end_label = self.new_label()
         while_label = self.new_label()
-        condition_temp = self.visit(
-            ctx.expression()) or ctx.expression().getText()
         # temp = self.new_temp()
 
         if self.method_name:
@@ -1238,6 +1289,8 @@ class MyVisitor(yaplVisitor):
             target_code = self.code[self.class_name]
 
         target_code.append(f"{while_label}:")
+        condition_temp = self.visit(
+            ctx.expression()) or ctx.expression().getText()
         # target_code.append(f"{condition_temp} = {ctx.expression().getText()}")
         target_code.append(f"if_false {condition_temp} goto {end_label}")
         self.cuadruplos.append(
@@ -1246,6 +1299,36 @@ class MyVisitor(yaplVisitor):
         self.visit(ctx.statement())
         target_code.append(f"goto {while_label}")
         target_code.append(f"{end_label}")
+
+    def visitClassMethodCallExpression(self, ctx: yaplParser.ClassMethodCallExpressionContext):
+        print("visitClassMethodCallExpression")
+        print(ctx.getText())
+        method_name = ctx.ID().getText()
+        class_name = ctx.expression().getText()
+        if self.method_name:
+            target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
+        else:
+            target_code = self.code[self.class_name]
+
+        if ctx.expressionList():
+            for expression in ctx.expressionList().expression():
+                temp = self.new_temp()
+                self.cuadruplos.append(
+                    ('PARAM', expression.getText(), '-', temp))
+                target_code.append(
+                    f"{temp} = {expression.getText()}")
+                target_code.append(
+                    f"PUSHPARAM {temp}")
+                self.cuadruplos.append(
+                    ('PUSHPARAM', temp, '-', '-'))
+            self.cuadruplos.append(('CALL', method_name, '-', '-'))
+
+        temp = self.new_temp()
+        target_code.append(
+            f"{temp} = LCALL {class_name}.{method_name}()")
+        self.cuadruplos.append(('CALL', method_name, '-', '-'))
+
+        return temp
 
     def get_size_of_type(self, type_str):
         """Devuelve el tamaño en bytes del tipo de datos proporcionado. Esto es solo un ejemplo y debe ser ajustado según el lenguaje y la plataforma."""
@@ -1294,7 +1377,7 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
             if errorListener.errors:
                 # visualize_tree(
                 #     tree, "../../interfaz-proyecto1-compis/src/assets/arbol_sintactico")
-                return Response({'errors': errorListener.errors}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'errors': errorListener.errors, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 # tree_str = tree.toStringTree(recog=parser)
                 # tree = parse_tree(tree_str)

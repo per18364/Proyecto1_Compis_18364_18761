@@ -1,4 +1,17 @@
 class Main {
+    void simpleFn(int z) {
+        int x;
+        int y;
+        x <- x*y*z;
+    }
+
+    void main() {
+        simpleFn(137);
+    }
+}
+
+/////////////////////////
+class Main {
     int age;
     string name;
     int hair;
@@ -16,7 +29,7 @@ class Main {
         fi
     }
     
-    int getAge() {
+    int main() {
         return age;
     }
 }
@@ -43,6 +56,13 @@ class Human inherits Main{
 }
 
 //////////////////////////////
+class Human {
+    int getEyes(int help) {
+        return help;
+    }
+}
+
+
 class Main inherits Object{
     int age;
     string name;
@@ -53,7 +73,7 @@ class Main inherits Object{
     humano <- new Human;
 
     int eyes;
-    eyes <- humano.getEyes();
+    eyes <- humano.getEyes(6);
     
     int bark() {
         if (age < 10) {
@@ -66,16 +86,11 @@ class Main inherits Object{
         fi
     }
     
-    int getAge() {
+    int main() {
         return 1;
     }
 }
 
-class Human {
-    int getEyes() {
-        return 69;
-    }
-}
 
 
 //////////////////////////////
@@ -95,9 +110,6 @@ class Main inherits IO{
     humano <- new Human;
 
     in_int(age);
-
-    int eyes;
-    eyes <- humano.getEyes();
     
     int bark() {
         if (age < 10) {
@@ -110,7 +122,41 @@ class Main inherits IO{
         fi
     }
     
-    int getAge() {
-        return 1;
+    void main() {
+        int eyes;
+        eyes <- humano.getEyes();
+        out_int(eyes);
+    }
+}
+
+/////////////////////
+class Main {
+    int age;
+    string name;
+    int hair;
+    age <- 5;
+    let int a, int b, int c in a + b + c;
+    
+    int bark() {
+        if (age < 10) {
+            bool beso;
+            age + 30;
+            return 0;
+        } else {
+            return 1;
+        }
+        fi
+    }
+    
+    int sumar(int x, int y) {
+        int sum <- x + y;
+        return sum;
+    }
+
+    void main() {
+        int v <- 5;
+        int w <- 10;
+        int z <- sumar(v, w);
+        out_int(z);
     }
 }

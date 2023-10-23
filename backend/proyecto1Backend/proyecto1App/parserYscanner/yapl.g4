@@ -69,7 +69,7 @@ statement:
 // Assignment Statement assignmentStatement: ID EQUALS expression SEMI;
 
 // Variable Declaration
-variableDeclaration: type ID (ASSIGN expression)? SEMI;
+variableDeclaration: type ID (ASSIGN statement)?;
 
 // Let declaration
 letDeclaration:
@@ -101,23 +101,23 @@ block: LBRACE statement* RBRACE;
 
 // Expressions
 expression:
-	expression PLUS expression							# additionExpression
-	| expression MINUS expression						# subtractionExpression
-	| expression MULT expression						# multiplicationExpression
+	expression MULT expression							# multiplicationExpression
 	| expression DIV expression							# divisionExpression
+	| expression PLUS expression						# additionExpression
+	| expression MINUS expression						# subtractionExpression
 	| expression EQ expression							# equalityExpression
 	| expression LT expression							# lessThanExpression
 	| expression GT expression							# greaterThanExpression
 	| expression LT_EQ expression						# lessThanOrEqualExpression
 	| expression GT_EQ expression						# greaterThanOrEqualExpression
 	| expression NEQ expression							# notEqualExpression
-	| expression ASSIGN expression						# assignmentExpression
 	| expression AND expression							# andExpression
 	| expression OR expression							# orExpression
 	| expression DOT ID LPAREN expressionList? RPAREN	# classMethodCallExpression
 	| NEW TYPE_ID										# newExpression
 	| NOT expression									# notExpression
 	| MINUS expression									# unaryMinusExpression
+	| expression ASSIGN expression						# assignmentExpression
 	| ID												# identifierExpression
 	| SELF												# selfLiteralExpression
 	| INTEGER											# integerLiteralExpression
