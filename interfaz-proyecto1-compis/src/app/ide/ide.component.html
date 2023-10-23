@@ -4,8 +4,8 @@
   <h4>Jorge Pérez, 18364</h4>
   <h4>Diego Ruiz, 18671</h4>
 </div>
-<div class="container">
-  <!-- <textarea [(ngModel)]="code" rows="35" wrap="off" (keydown)="handleKeyEvent($event)"></textarea> -->
+<!-- <div class="container">
+  <textarea [(ngModel)]="code" rows="35" wrap="off" (keydown)="handleKeyEvent($event)"></textarea>
   <div class="textarea-container">
     <div class="line-numbers"></div>
     <textarea [(ngModel)]="code" rows="35" wrap="off" (keydown)="handleKeyEvent($event)" (input)="updateLineNumbers()"
@@ -15,14 +15,14 @@
   <div class="submit">
     <button (click)="analyze()">Analyze</button>
   </div>
-</div>
+</div> -->
 
-<div *ngIf="result">
-  <!-- <pre *ngIf="result.tree"> {{result | json}} </pre> -->
+<!-- <div *ngIf="result">
+  <pre *ngIf="result.tree"> {{result | json}} </pre>
   <pre *ngIf="result.message" class="success">{{ result.message | json }}</pre>
   <div *ngIf="!result.errors" class="c3d">
     <pre *ngIf="result.Codigo3Direcciones" class="info"> {{result.Codigo3Direcciones | json}} </pre>
-    <!-- <pre *ngIf="result.Cuadruplos" class="info"> {{result.Cuadruplos | json}} </pre> -->
+    <pre *ngIf="result.Cuadruplos" class="info"> {{result.Cuadruplos | json}} </pre>
     <table *ngIf="result.Cuadruplos" class="info-table">
       <thead>
         <tr>
@@ -45,5 +45,63 @@
   <div *ngIf="result.errors">
     <pre *ngFor="let err of result.errors" class="error"> {{err}} </pre>
   </div>
-  <!-- <iframe title="Arbol de Análisis Sintáctico" [src]="pdfUrl | safeUrl" width="100%" height="500px"></iframe> -->
+  <iframe title="Arbol de Análisis Sintáctico" [src]="pdfUrl | safeUrl" width="100%" height="500px"></iframe>
+</div> -->
+<div class="container">
+  <div class="row">
+    <!-- Columna del Textarea -->
+    <div class="col-textarea">
+      <div class="textarea-container">
+        <div class="line-numbers"></div>
+        <textarea [(ngModel)]="code" rows="35" wrap="off" (keydown)="handleKeyEvent($event)"
+          (input)="updateLineNumbers()" (scroll)="syncScroll()"></textarea>
+      </div>
+
+      <!-- Añade esto justo antes del botón "Analyze" -->
+      <div class="file-input">
+        <input type="file" id="fileInput" (change)="handleFileInput($event)" accept=".yapl">
+        <label for="fileInput">Subir un archivo .yapl</label>
+      </div>
+
+
+      <div class="submit">
+        <button (click)="analyze()">Analyze</button>
+      </div>
+
+      <!-- <div *ngIf="result">
+        <pre *ngIf="result.message" class="success">{{ result.message | json }}</pre>
+      </div> -->
+    </div>
+
+    <!-- Columna del resultado -->
+    <div class="col-result">
+      <div *ngIf="result">
+        <pre *ngIf="result.message" class="success">{{ result.message | json }}</pre>
+        <div *ngIf="!result.errors" class="c3d">
+          <pre *ngIf="result.Codigo3Direcciones" class="info"> {{result.Codigo3Direcciones | json}} </pre>
+          <table *ngIf="result.Cuadruplos" class="info-table">
+            <thead>
+              <tr>
+                <th>Operator</th>
+                <th>Arg1</th>
+                <th>Arg2</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let cuadruplo of result.Cuadruplos">
+                <td>{{cuadruplo[0]}}</td>
+                <td>{{cuadruplo[1]}}</td>
+                <td>{{cuadruplo[2]}}</td>
+                <td>{{cuadruplo[3]}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="result.errors">
+          <pre *ngFor="let err of result.errors" class="error"> {{err}} </pre>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { AnalysisService } from '../services/analysis.service';
 
 @Component({
@@ -11,7 +11,10 @@ export class IdeComponent {
   result: any;
   pdfUrl: string = '';
 
-  constructor(private analysisService: AnalysisService) {}
+  constructor(
+    private analysisService: AnalysisService,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   handleKeyEvent(event: KeyboardEvent) {
     if (event.key === 'Tab') {
@@ -43,6 +46,21 @@ export class IdeComponent {
       lineNumbersDiv.appendChild(lineNumber);
       lineNumber.style.fontFamily = 'monospace';
       lineNumber.style.fontSize = '16px';
+    }
+  }
+
+  handleFileInput(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.code = e.target.result;
+        setTimeout(() => {
+          this.updateLineNumbers();
+          this.cdRef.detectChanges();
+        }, 100);
+      };
+      reader.readAsText(file);
     }
   }
 

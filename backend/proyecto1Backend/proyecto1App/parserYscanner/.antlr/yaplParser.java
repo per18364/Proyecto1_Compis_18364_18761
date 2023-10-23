@@ -125,6 +125,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_program; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterProgram(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitProgram(this);
+		}
 	}
 
 	public final ProgramContext program() throws RecognitionException {
@@ -180,6 +188,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_classDeclaration; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterClassDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitClassDeclaration(this);
+		}
 	}
 
 	public final ClassDeclarationContext classDeclaration() throws RecognitionException {
@@ -254,6 +270,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_classBody; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterClassBody(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitClassBody(this);
+		}
 	}
 
 	public final ClassBodyContext classBody() throws RecognitionException {
@@ -325,6 +349,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_attributeDeclaration; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterAttributeDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAttributeDeclaration(this);
+		}
 	}
 
 	public final AttributeDeclarationContext attributeDeclaration() throws RecognitionException {
@@ -364,6 +396,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_assignmentDeclaration; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterAssignmentDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAssignmentDeclaration(this);
+		}
 	}
 
 	public final AssignmentDeclarationContext assignmentDeclaration() throws RecognitionException {
@@ -405,6 +445,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitType(this);
+		}
 	}
 
 	public final TypeContext type() throws RecognitionException {
@@ -455,6 +503,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_methodDeclaration; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterMethodDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitMethodDeclaration(this);
+		}
 	}
 
 	public final MethodDeclarationContext methodDeclaration() throws RecognitionException {
@@ -513,6 +569,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_parameterList; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterParameterList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitParameterList(this);
+		}
 	}
 
 	public final ParameterListContext parameterList() throws RecognitionException {
@@ -563,6 +627,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_parameter; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterParameter(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitParameter(this);
+		}
 	}
 
 	public final ParameterContext parameter() throws RecognitionException {
@@ -618,6 +690,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_statement; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitStatement(this);
+		}
 	}
 
 	public final StatementContext statement() throws RecognitionException {
@@ -710,6 +790,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_variableDeclaration; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterVariableDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitVariableDeclaration(this);
+		}
 	}
 
 	public final VariableDeclarationContext variableDeclaration() throws RecognitionException {
@@ -781,6 +869,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_letDeclaration; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterLetDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitLetDeclaration(this);
+		}
 	}
 
 	public final LetDeclarationContext letDeclaration() throws RecognitionException {
@@ -877,6 +973,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_ifStatement; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterIfStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitIfStatement(this);
+		}
 	}
 
 	public final IfStatementContext ifStatement() throws RecognitionException {
@@ -938,6 +1042,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_whileStatement; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterWhileStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitWhileStatement(this);
+		}
 	}
 
 	public final WhileStatementContext whileStatement() throws RecognitionException {
@@ -982,6 +1094,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_methodCallStatement; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterMethodCallStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitMethodCallStatement(this);
+		}
 	}
 
 	public final MethodCallStatementContext methodCallStatement() throws RecognitionException {
@@ -1032,6 +1152,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_expressionStatement; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterExpressionStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitExpressionStatement(this);
+		}
 	}
 
 	public final ExpressionStatementContext expressionStatement() throws RecognitionException {
@@ -1068,6 +1196,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_returnStatement; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterReturnStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitReturnStatement(this);
+		}
 	}
 
 	public final ReturnStatementContext returnStatement() throws RecognitionException {
@@ -1120,6 +1256,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_expressionList; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterExpressionList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitExpressionList(this);
+		}
 	}
 
 	public final ExpressionListContext expressionList() throws RecognitionException {
@@ -1174,6 +1318,14 @@ public class yaplParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_block; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterBlock(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitBlock(this);
+		}
 	}
 
 	public final BlockContext block() throws RecognitionException {
@@ -1239,6 +1391,14 @@ public class yaplParser extends Parser {
 			return getRuleContext(ExpressionListContext.class,0);
 		}
 		public ClassMethodCallExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterClassMethodCallExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitClassMethodCallExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class AdditionExpressionContext extends ExpressionContext {
@@ -1250,6 +1410,14 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode PLUS() { return getToken(yaplParser.PLUS, 0); }
 		public AdditionExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterAdditionExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAdditionExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class LessThanOrEqualExpressionContext extends ExpressionContext {
@@ -1261,17 +1429,41 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode LT_EQ() { return getToken(yaplParser.LT_EQ, 0); }
 		public LessThanOrEqualExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterLessThanOrEqualExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitLessThanOrEqualExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class NewExpressionContext extends ExpressionContext {
 		public TerminalNode NEW() { return getToken(yaplParser.NEW, 0); }
 		public TerminalNode TYPE_ID() { return getToken(yaplParser.TYPE_ID, 0); }
 		public NewExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterNewExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitNewExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IdentifierExpressionContext extends ExpressionContext {
 		public TerminalNode ID() { return getToken(yaplParser.ID, 0); }
 		public IdentifierExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterIdentifierExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitIdentifierExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class AssignmentExpressionContext extends ExpressionContext {
@@ -1283,6 +1475,14 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode ASSIGN() { return getToken(yaplParser.ASSIGN, 0); }
 		public AssignmentExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterAssignmentExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAssignmentExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class NotExpressionContext extends ExpressionContext {
@@ -1291,11 +1491,27 @@ public class yaplParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public NotExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterNotExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitNotExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class SelfLiteralExpressionContext extends ExpressionContext {
 		public TerminalNode SELF() { return getToken(yaplParser.SELF, 0); }
 		public SelfLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterSelfLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitSelfLiteralExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class MultiplicationExpressionContext extends ExpressionContext {
@@ -1307,6 +1523,14 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode MULT() { return getToken(yaplParser.MULT, 0); }
 		public MultiplicationExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterMultiplicationExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitMultiplicationExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class NotEqualExpressionContext extends ExpressionContext {
@@ -1318,6 +1542,14 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode NEQ() { return getToken(yaplParser.NEQ, 0); }
 		public NotEqualExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterNotEqualExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitNotEqualExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class GreaterThanExpressionContext extends ExpressionContext {
@@ -1329,6 +1561,14 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode GT() { return getToken(yaplParser.GT, 0); }
 		public GreaterThanExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterGreaterThanExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitGreaterThanExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class GreaterThanOrEqualExpressionContext extends ExpressionContext {
@@ -1340,11 +1580,27 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode GT_EQ() { return getToken(yaplParser.GT_EQ, 0); }
 		public GreaterThanOrEqualExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterGreaterThanOrEqualExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitGreaterThanOrEqualExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StringLiteralExpressionContext extends ExpressionContext {
 		public TerminalNode STRING() { return getToken(yaplParser.STRING, 0); }
 		public StringLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterStringLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitStringLiteralExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class OrExpressionContext extends ExpressionContext {
@@ -1356,6 +1612,14 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode OR() { return getToken(yaplParser.OR, 0); }
 		public OrExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterOrExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitOrExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class UnaryMinusExpressionContext extends ExpressionContext {
@@ -1364,6 +1628,14 @@ public class yaplParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public UnaryMinusExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterUnaryMinusExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitUnaryMinusExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class AndExpressionContext extends ExpressionContext {
@@ -1375,11 +1647,27 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode AND() { return getToken(yaplParser.AND, 0); }
 		public AndExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterAndExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAndExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class TrueLiteralExpressionContext extends ExpressionContext {
 		public TerminalNode TRUE() { return getToken(yaplParser.TRUE, 0); }
 		public TrueLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterTrueLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitTrueLiteralExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class SubtractionExpressionContext extends ExpressionContext {
@@ -1391,16 +1679,40 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode MINUS() { return getToken(yaplParser.MINUS, 0); }
 		public SubtractionExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterSubtractionExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitSubtractionExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IntegerLiteralExpressionContext extends ExpressionContext {
 		public TerminalNode INTEGER() { return getToken(yaplParser.INTEGER, 0); }
 		public IntegerLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterIntegerLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitIntegerLiteralExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class VoidLiteralExpressionContext extends ExpressionContext {
 		public TerminalNode VOID() { return getToken(yaplParser.VOID, 0); }
 		public VoidLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterVoidLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitVoidLiteralExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class EqualityExpressionContext extends ExpressionContext {
@@ -1412,6 +1724,14 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode EQ() { return getToken(yaplParser.EQ, 0); }
 		public EqualityExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterEqualityExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitEqualityExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class LessThanExpressionContext extends ExpressionContext {
@@ -1423,6 +1743,14 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode LT() { return getToken(yaplParser.LT, 0); }
 		public LessThanExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterLessThanExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitLessThanExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class DivisionExpressionContext extends ExpressionContext {
@@ -1434,11 +1762,27 @@ public class yaplParser extends Parser {
 		}
 		public TerminalNode DIV() { return getToken(yaplParser.DIV, 0); }
 		public DivisionExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterDivisionExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitDivisionExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class FalseLiteralExpressionContext extends ExpressionContext {
 		public TerminalNode FALSE() { return getToken(yaplParser.FALSE, 0); }
 		public FalseLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterFalseLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitFalseLiteralExpression(this);
+		}
 	}
 
 	public final ExpressionContext expression() throws RecognitionException {

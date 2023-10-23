@@ -1,0 +1,30 @@
+class Main inherits IO{
+    int age;
+    string name;
+    int hair;
+    age <- 5;
+    let int a, int b, int c in a + b + c;
+    
+    int bark() {
+        if (age < 10) {
+            bool beso;
+            age + 30;
+            return 0;
+        } else {
+            return 1;
+        }
+        fi
+    }
+    
+    int sumar(int x, int y) {
+        int sum <- x + y;
+        return sum;
+    }
+
+    void main() {
+        int x <- 5;
+        int y <- 10;
+        int z <- sumar(x, y);
+        out_int(z);
+    }
+}
