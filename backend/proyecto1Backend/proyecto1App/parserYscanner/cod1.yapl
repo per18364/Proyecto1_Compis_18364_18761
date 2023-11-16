@@ -1,4 +1,4 @@
-class Main {
+class Main inherits IO{
     --int eyes;
     void simpleFn(int z) {
         int x;
@@ -6,6 +6,7 @@ class Main {
         x <- 5;
         y <- 3;
         x <- x*y*z;
+        out_int(x);
     }
 
     void main() {

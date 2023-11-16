@@ -906,6 +906,8 @@ class MyVisitor(yaplVisitor):
         self.listener = listener
         self.action = ""
         self.temps = {}
+        self.is_new = False
+        self.data = {}
 
     def reset_current_mem_size(self):
         self.current_mem_size = 0
@@ -989,8 +991,6 @@ class MyVisitor(yaplVisitor):
         children = self.visit(ctx.expression())
         print(children)
 
-        temp = self.new_temp()
-
         if children:
             self.code[self.class_name].append(
                 f"{var_name} = {children}")
@@ -998,10 +998,12 @@ class MyVisitor(yaplVisitor):
             self.add_to_cuadruplos(
                 ('ASSIGN', children, '-', var_name))
         else:
-            self.code[self.class_name].append(
-                f"{var_name} = {expression_result}")
-            self.add_to_cuadruplos(('li', temp, expression_result))
-            self.add_to_cuadruplos(('sw', temp, var_name))
+            if not self.is_new:
+                temp = self.new_temp()
+                self.code[self.class_name].append(
+                    f"{var_name} = {expression_result}")
+                self.add_to_cuadruplos(('li', temp, expression_result))
+                self.add_to_cuadruplos(('sw', temp, var_name))
 
     def visitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
         print("visitMethodDeclaration")
@@ -1071,13 +1073,13 @@ class MyVisitor(yaplVisitor):
                     f"PUSHPARAM {temp}")
                 # self.add_to_cuadruplos(
                 #     ('PUSHPARAM', temp))
-            if method_name == 'out_int':
-                self.add_to_cuadruplos(('',))
-                self.add_to_cuadruplos(('lw', '$a0', expression.getText()))
-                self.add_to_cuadruplos(('li', '$v0', '1'))
-                self.add_to_cuadruplos(('syscall',))
-            else:
-                self.add_to_cuadruplos(('jal', method_name))
+        if method_name == 'out_int':
+            self.add_to_cuadruplos(('',))
+            self.add_to_cuadruplos(('lw', '$a0', expression.getText()))
+            self.add_to_cuadruplos(('li', '$v0', '1'))
+            self.add_to_cuadruplos(('syscall',))
+        else:
+            self.add_to_cuadruplos(('jal', method_name))
 
         if self.call:
             self.call = False
@@ -1110,9 +1112,11 @@ class MyVisitor(yaplVisitor):
     def visitAdditionExpression(self, ctx: yaplParser.AdditionExpressionContext):
         print("visitAdditionExpression")
         print(ctx.getText())
+        self.action = "operation"
         left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
-
+        self.action = ""
+        # print(left, right)
         for scope in self.listener.symbol_table.scopes:
             if ctx.expression(0).getText() in scope:
                 if ('usado' in scope[ctx.expression(0).getText()] and scope[ctx.expression(0).getText()]['usado'] == True):
@@ -1144,10 +1148,11 @@ class MyVisitor(yaplVisitor):
     def visitSubtractionExpression(self, ctx: yaplParser.SubtractionExpressionContext):
         print("visitSubtractionExpression")
         print(ctx.getText())
+        self.action = "operation"
         left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
-        temp = self.new_temp()
-
+        self.action = ""
+        # print(left, right)
         for scope in self.listener.symbol_table.scopes:
             if ctx.expression(0).getText() in scope:
                 if ('usado' in scope[ctx.expression(0).getText()] and scope[ctx.expression(0).getText()]['usado'] == True):
@@ -1215,8 +1220,11 @@ class MyVisitor(yaplVisitor):
     def visitDivisionExpression(self, ctx: yaplParser.DivisionExpressionContext):
         print("visitDivisionExpression")
         print(ctx.getText())
+        self.action = "operation"
         left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
+        self.action = ""
+        # print(left, right)
         for scope in self.listener.symbol_table.scopes:
             if ctx.expression(0).getText() in scope:
                 if ('usado' in scope[ctx.expression(0).getText()] and scope[ctx.expression(0).getText()]['usado'] == True):
@@ -1247,7 +1255,8 @@ class MyVisitor(yaplVisitor):
 
     def visitNewExpression(self, ctx: yaplParser.NewExpressionContext):
         print("visitNewExpression")
-        self.add_to_cuadruplos(('new', ctx.TYPE_ID().getText(), '-', '-'))
+        self.is_new = True
+        # self.add_to_cuadruplos(('new', ctx.TYPE_ID().getText(), '-', '-'))
 
     def visitIfStatement(self, ctx: yaplParser.IfStatementContext):
         print("visitIfStatement")
@@ -1366,6 +1375,9 @@ class MyVisitor(yaplVisitor):
             self.add_to_cuadruplos(('li', temp, right))
             self.add_to_cuadruplos(('sw', temp, left))
         else:
+            if right == "$v0":
+                self.cuadruplos.pop(-2)
+            # else:
             self.add_to_cuadruplos(('sw', right, left))
 
         if self.method_name:
@@ -1406,9 +1418,13 @@ class MyVisitor(yaplVisitor):
         else:
             target_code.append(
                 f"{var_name} = {expression_result}")
-            self.add_to_cuadruplos(
-                ('lw', temp, var_name))
-            self.temps[var_name] = temp
+            for scope in self.listener.symbol_table.scopes:
+                if var_name in scope:
+                    if 'usado' in scope[var_name] and scope[var_name]['usado'] == True:
+                        # temp = self.new_temp()
+                        self.add_to_cuadruplos(
+                            ('lw', temp, var_name))
+                        self.temps[var_name] = temp
         var_size = self.get_size_of_type(ctx.type_().getText())
         self.update_mem_for_variable(var_size)
 
@@ -1486,7 +1502,8 @@ class MyVisitor(yaplVisitor):
                     ('PUSHPARAM', temp, '-', '-'))
             # self.add_to_cuadruplos(('CALL', method_name, '-', '-'))
 
-        temp = self.new_temp()
+        # temp = self.new_temp()
+        temp = "$v0"
         target_code.append(
             f"{temp} = LCALL {class_name}.{method_name}()")
         self.add_to_cuadruplos(('jal', method_name))
@@ -1497,6 +1514,7 @@ class MyVisitor(yaplVisitor):
         print("visitIdentifierExpression")
         print(ctx.getText())
         print("op", self.action)
+        si_se_usa = False
         if ctx.getText() in self.temps:
             if self.action == "assignment":
                 return ctx.getText()
@@ -1504,7 +1522,11 @@ class MyVisitor(yaplVisitor):
         else:
             temp = self.new_temp()
 
-        if self.action == "operation":
+        for scope in self.listener.symbol_table.scopes:
+            if ctx.getText() in scope:
+                if ('usado' in scope[ctx.getText()] and scope[ctx.getText()]['usado'] == True):
+                    si_se_usa = True
+        if self.action == "operation" and si_se_usa:
             self.add_to_cuadruplos(('lw', temp, ctx.ID().getText()))
 
         return temp

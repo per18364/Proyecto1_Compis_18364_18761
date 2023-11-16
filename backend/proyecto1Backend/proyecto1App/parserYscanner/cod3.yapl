@@ -13,7 +13,6 @@ class Main inherits IO{
     Human humano;
     humano <- new Human;
 
-    in_int(age);
     
     int bark() {
         if (age < 10) {
