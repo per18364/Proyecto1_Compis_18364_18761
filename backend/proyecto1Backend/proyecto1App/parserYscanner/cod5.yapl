@@ -1,0 +1,21 @@
+class Main inherits IO{
+    void main() {
+        int a = 1;
+        int b = 2;
+        int c = 3;
+        int d = 4;
+        if (a < b) {
+            if (b < c) {
+                if (c < d) {
+                    out_int(1);
+                } else {
+                    out_int(2);
+                }
+            } else {
+                out_int(3);
+            }
+        } else {
+            out_int(4);
+        }
+    }
+}

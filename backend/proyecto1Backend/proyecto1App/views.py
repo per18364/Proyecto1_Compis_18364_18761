@@ -385,9 +385,15 @@ class MyListener(yaplListener):
                                     param_type = self.symbol_table.lookup(param_name)[
                                         'tipo']
                                     print("type", param_type)
+                                    print(self.method_params)
                                     for key, value in self.method_params[method_name]['parametros'].items():
                                         if param_name == key or param_type == self.method_params[method_name]['parametros'][key]:
                                             print("parametro correcto")
+                                            for scope in self.symbol_table.scopes:
+                                                print(scope)
+                                                if method_name in scope:
+                                                    if key in scope:
+                                                        scope[key]['valor'] = param_name
                                         else:
                                             self.error_listener.errors.append(
                                                 f"ERROR semántico en línea {ctx.start.line}:{ctx.start.column} -> El tipo de retorno del método <{method_name}> es <{value}> y se le está pasando un parametro <{param_name}> tipo <{param_type}>.")
@@ -799,6 +805,13 @@ class MyListener(yaplListener):
                 # self.enterAssignmentDeclaration(ctx)
                 print("es una asignacion")
                 self.accessSymbol(ctx, variables[0][:-1])
+                for scope in self.symbol_table.scopes:
+                    print("sks", scope)
+                    if variables[0][:-1] in scope:
+                        if variables[1] == variables[0][:-1]:
+                            break
+                        scope[variables[0][:-1]]['valor'] = variables[1]
+                        scope[variables[0][:-1]]['usado'] = True
             else:
                 for variable in variables:
                     # check if variable is a number
@@ -892,22 +905,23 @@ class MyListener(yaplListener):
 
 # ARREGLAR PARA QUE SALGA BIEN MI C3D**. LLAMADAS DE FUNCIONES Y LA TABLA DE CUADRUPLOS
 class MyVisitor(yaplVisitor):
-    def __init__(self, listener):
+    def __init__(self, my_listener):
         self.code = {}  # Lista para almacenar las instrucciones de código intermedio
         self.temp_count = 0  # Contador para variables temporales
+        self.arg_count = 0
         self.label_count = 0  # Contador para etiquetas
         self.class_name = ""
         self.method_name = ""
         self.cuadruplos = []
+        self.mips = []
         self.mem_sizes = {}
         self.current_mem_size = 0
         self.call = False
-        self.depth = 0
-        self.listener = listener
-        self.action = ""
+        self.listener = my_listener
         self.temps = {}
-        self.is_new = False
-        self.data = {}
+        self.args = {}
+        self.action = ""
+        self.params = []
 
     def reset_current_mem_size(self):
         self.current_mem_size = 0
@@ -938,21 +952,42 @@ class MyVisitor(yaplVisitor):
 
     def new_temp(self):
         # Función para generar un nuevo nombre de variable temporal
+        name_temp = f"$t{self.temp_count}"
         self.temp_count += 1
-        return f"$t{self.temp_count}"
+        return name_temp
+
+    def new_arg(self):
+        name_arg = f"$a{self.arg_count}"
+        self.arg_count += 1
+        return name_arg
+
+    def lookup_temp(self, var_name):
+        # Función para buscar el nombre de una variable temporal
+        if var_name in self.temps:
+            return self.temps[var_name]
+        return None
+
+    def lookup_arg(self, var_name):
+        if var_name in self.args:
+            return self.args[var_name]
+        return None
 
     def new_label(self):
         # Función para generar un nuevo nombre de etiqueta
         self.label_count += 1
         return f"L{self.label_count}"
 
-    def add_to_cuadruplos(self, data):
+    def add_to_mips(self, data):
         if self.method_name:
             # Agrega un espacio al inicio de la tupla
-            modified_data = ('  ',) + data
-            self.cuadruplos.append(modified_data)
+            if data[0] == self.method_name + ':':
+                # print("data", data)
+                self.mips.append(data)
+            else:
+                modified_data = ('  ',) + data
+                self.mips.append(modified_data)
         else:
-            self.cuadruplos.append(data)
+            self.mips.append(data)
 
     def visitClassDeclaration(self, ctx: yaplParser.ClassDeclarationContext):
         # print("visitClassDeclaration")
@@ -969,18 +1004,15 @@ class MyVisitor(yaplVisitor):
         print("visitAttributeDeclaration")
         var_name = ctx.ID().getText()
         print(var_name)
-
         if ctx.ID():
             expression_result = ctx.type_().getText()
             self.code[self.class_name].append(
                 f"{var_name} = {expression_result}")
 
-            for scope in self.listener.symbol_table.scopes:
-                if var_name in scope:
-                    if 'usado' in scope[var_name] and scope[var_name]['usado'] == True:
-                        temp = self.new_temp()
-                        self.add_to_cuadruplos(('lw', temp, var_name))
-                        self.temps[var_name] = temp
+            self.cuadruplos.append(
+                ('ASSIGN', expression_result, '-', var_name))
+            self.add_to_mips(
+                ('ASSIGN', expression_result, '-', var_name))
         var_size = self.get_size_of_type(ctx.type_().getText())
         self.update_mem_for_variable(var_size)
 
@@ -995,34 +1027,34 @@ class MyVisitor(yaplVisitor):
             self.code[self.class_name].append(
                 f"{var_name} = {children}")
 
-            self.add_to_cuadruplos(
+            self.cuadruplos.append(
+                ('ASSIGN', children, '-', var_name))
+            self.add_to_mips(
                 ('ASSIGN', children, '-', var_name))
         else:
-            if not self.is_new:
-                temp = self.new_temp()
-                self.code[self.class_name].append(
-                    f"{var_name} = {expression_result}")
-                self.add_to_cuadruplos(('li', temp, expression_result))
-                self.add_to_cuadruplos(('sw', temp, var_name))
+            self.code[self.class_name].append(
+                f"{var_name} = {expression_result}")
+            self.cuadruplos.append(('<-', expression_result, '-', var_name))
+            self.add_to_mips(('<-', expression_result, '-', var_name))
 
     def visitMethodDeclaration(self, ctx: yaplParser.MethodDeclarationContext):
-        print("visitMethodDeclaration")
+        # print("visitMethodDeclaration")
         if self.method_name != "":
             self.method_name = ""
         self.method_name = ctx.ID().getText()
         # print(self.method_name)
         self.code[self.class_name].append(
             {f"{self.class_name}.{self.method_name}:": []})
-        self.cuadruplos.append((f"{self.method_name}:", ""))
         self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
             "BeginFuc_")
+        self.add_to_mips((f"{self.method_name}:",))
         self.commit_method_mem()
         self.visitChildren(ctx)
         if self.method_name != "main":
-            self.add_to_cuadruplos(('jr', "$ra"))
+            self.add_to_mips(('jr', "$ra"))
         else:
-            self.add_to_cuadruplos(('li', '$v0', '10'))
-            self.add_to_cuadruplos(("syscall", ""))
+            self.add_to_mips(('li', '$v0', '10'))
+            self.add_to_mips(("syscall", ""))
         self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
             "EndFunc_")
         self.method_name = ""
@@ -1034,24 +1066,25 @@ class MyVisitor(yaplVisitor):
     def visitParameter(self, ctx: yaplParser.ParameterContext):
         print("visitParameter")
         print(ctx.getText())
-        var_name = ctx.ID().getText()
-        print(var_name)
-        expression_result = ctx.type_().getText()
+        self.params.append(ctx.ID().getText())
+        # var_name = ctx.ID().getText()
+        # print(var_name)
+        # expression_result = ctx.type_().getText()
 
-        temp = self.new_temp()
+        # temp = self.lookup_temp(var_name) or self.new_temp()
 
-        if self.method_name:
-            target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
-        else:
-            target_code = self.code[self.class_name]
+        # if self.method_name:
+        #     target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
+        # else:
+        #     target_code = self.code[self.class_name]
 
-        target_code.append(
-            f"{var_name} = {expression_result}")
-        self.add_to_cuadruplos(
-            ('lw', temp, var_name))
-        self.temps[var_name] = temp
-        var_size = self.get_size_of_type(ctx.type_().getText())
-        self.update_mem_for_variable(var_size)
+        # target_code.append(
+        #     f"{var_name} = {expression_result}")
+        # self.add_to_cuadruplos(
+        #     ('lw', temp, var_name))
+        # self.temps[var_name] = temp
+        # var_size = self.get_size_of_type(ctx.type_().getText())
+        # self.update_mem_for_variable(var_size)
 
     def visitMethodCallStatement(self, ctx: yaplParser.MethodCallStatementContext):
         print("visitMethodCallStatement")
@@ -1064,22 +1097,31 @@ class MyVisitor(yaplVisitor):
 
         if ctx.expressionList():
             for expression in ctx.expressionList().expression():
-                temp = self.new_temp()
-                # self.add_to_cuadruplos(
-                #     ('PARAM', expression.getText(), '', temp))
+                temp = self.lookup_temp(
+                    expression.getText()) or self.new_temp()
+                arg = self.lookup_arg(expression.getText()) or self.new_arg()
+                self.args[expression.getText()] = arg
+                self.cuadruplos.append(
+                    ('PARAM', expression.getText(), '-', temp))
+                # self.add_to_mips(
+                #     ('PARAM', expression.getText(), '-', temp))
                 target_code.append(
                     f"{temp} = {expression.getText()}")
                 target_code.append(
                     f"PUSHPARAM {temp}")
-                # self.add_to_cuadruplos(
-                #     ('PUSHPARAM', temp))
-        if method_name == 'out_int':
-            self.add_to_cuadruplos(('',))
-            self.add_to_cuadruplos(('lw', '$a0', expression.getText()))
-            self.add_to_cuadruplos(('li', '$v0', '1'))
-            self.add_to_cuadruplos(('syscall',))
-        else:
-            self.add_to_cuadruplos(('jal', method_name))
+                self.cuadruplos.append(
+                    ('PUSHPARAM', temp, '-', '-'))
+                self.add_to_mips(
+                    ('move', arg, temp))
+            self.cuadruplos.append(('CALL', method_name, '-', '-'))
+            if method_name == 'out_int':
+                self.add_to_mips(('',))
+                self.add_to_mips(('lw', '$a0', expression.getText()))
+                self.add_to_mips(('li', '$v0', '1'))
+                self.add_to_mips(('syscall',))
+            else:
+                self.add_to_mips(('jal', method_name))
+            # self.add_to_mips(('CALL', method_name, '-', '-'))
 
         if self.call:
             self.call = False
@@ -1089,22 +1131,12 @@ class MyVisitor(yaplVisitor):
                 f"LCall {method_name}()")
 
     def visitLetDeclaration(self, ctx: yaplParser.LetDeclarationContext):
-        print("visitLetDeclaration")
+        # print("visitLetDeclaration")
         # print(ctx.getText())
         for idx, type in enumerate(ctx.type_()):
             # print(type.getText(), ctx.ID()[idx].getText())
             self.code[self.class_name].append(
                 f"{ctx.ID()[idx].getText()} = {type.getText()}")
-
-            for scope in self.listener.symbol_table.scopes:
-                if ctx.ID()[idx].getText() in scope:
-                    if 'usado' in scope[ctx.ID()[idx].getText()] and scope[ctx.ID()[idx].getText()]['usado'] == True:
-                        temp = self.new_temp()
-                        self.add_to_cuadruplos(
-                            ('lw', temp, ctx.ID()[idx].getText()))
-            # if ctx.expression():
-            #     self.add_to_cuadruplos(
-            #         ('sw', ctx.expression()[idx].getText(), '-', temp))
             var_size = self.get_size_of_type(type.getText())
             self.update_mem_for_variable(var_size)
         self.visitChildren(ctx)
@@ -1112,74 +1144,38 @@ class MyVisitor(yaplVisitor):
     def visitAdditionExpression(self, ctx: yaplParser.AdditionExpressionContext):
         print("visitAdditionExpression")
         print(ctx.getText())
-        self.action = "operation"
         left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
-        self.action = ""
-        # print(left, right)
-        for scope in self.listener.symbol_table.scopes:
-            if ctx.expression(0).getText() in scope:
-                if ('usado' in scope[ctx.expression(0).getText()] and scope[ctx.expression(0).getText()]['usado'] == True):
-                    temp = self.new_temp()
+        temp = self.new_temp()
 
-                    self.add_to_cuadruplos(('add', temp, left, right))
+        self.cuadruplos.append(('+', left, right, temp))
+        self.add_to_mips(('+', left, right, temp))
 
-                    if self.method_name:
-                        target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
-                    else:
-                        target_code = self.code[self.class_name]
+        if self.method_name:
+            target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
+        else:
+            target_code = self.code[self.class_name]
 
-                    target_code.append(f"{temp} = {left} + {right}")
-                    return temp
-            elif ctx.expression(1).getText() in scope:
-                if ('usado' in scope[ctx.expression(1).getText()] and scope[ctx.expression(1).getText()]['usado'] == True):
-                    temp = self.new_temp()
-
-                    self.add_to_cuadruplos(('add', temp, left, right))
-
-                    if self.method_name:
-                        target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
-                    else:
-                        target_code = self.code[self.class_name]
-
-                    target_code.append(f"{temp} = {left} + {right}")
-                    return temp
+        target_code.append(f"{temp} = {left} + {right}")
+        return temp
 
     def visitSubtractionExpression(self, ctx: yaplParser.SubtractionExpressionContext):
         print("visitSubtractionExpression")
         print(ctx.getText())
-        self.action = "operation"
         left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
-        self.action = ""
-        # print(left, right)
-        for scope in self.listener.symbol_table.scopes:
-            if ctx.expression(0).getText() in scope:
-                if ('usado' in scope[ctx.expression(0).getText()] and scope[ctx.expression(0).getText()]['usado'] == True):
-                    temp = self.new_temp()
+        temp = self.new_temp()
 
-                    self.add_to_cuadruplos(('sub', temp, left, right))
+        self.cuadruplos.append(('-', left, right, temp))
+        self.add_to_mips(('-', left, right, temp))
 
-                    if self.method_name:
-                        target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
-                    else:
-                        target_code = self.code[self.class_name]
+        if self.method_name:
+            target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
+        else:
+            target_code = self.code[self.class_name]
 
-                    target_code.append(f"{temp} = {left} + {right}")
-                    return temp
-            elif ctx.expression(1).getText() in scope:
-                if ('usado' in scope[ctx.expression(1).getText()] and scope[ctx.expression(1).getText()]['usado'] == True):
-                    temp = self.new_temp()
-
-                    self.add_to_cuadruplos(('sub', temp, left, right))
-
-                    if self.method_name:
-                        target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
-                    else:
-                        target_code = self.code[self.class_name]
-
-                    target_code.append(f"{temp} = {left} + {right}")
-                    return temp
+        target_code.append(f"{temp} = {left} - {right}")
+        return temp
 
     def visitMultiplicationExpression(self, ctx: yaplParser.MultiplicationExpressionContext):
         print("visitMultiplicationExpression")
@@ -1188,75 +1184,41 @@ class MyVisitor(yaplVisitor):
         left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
         self.action = ""
-        # print(left, right)
-        for scope in self.listener.symbol_table.scopes:
-            if ctx.expression(0).getText() in scope:
-                if ('usado' in scope[ctx.expression(0).getText()] and scope[ctx.expression(0).getText()]['usado'] == True):
-                    temp = self.new_temp()
+        temp = self.new_temp()
 
-                    self.add_to_cuadruplos(('mul', temp, left, right))
+        self.cuadruplos.append(('*', left, right, temp))
+        self.add_to_mips(('mul', temp, left, right))
 
-                    if self.method_name:
-                        target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
-                    else:
-                        target_code = self.code[self.class_name]
+        if self.method_name:
+            target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
+        else:
+            target_code = self.code[self.class_name]
 
-                    target_code.append(f"{temp} = {left} + {right}")
-                    return temp
-            elif ctx.expression(1).getText() in scope:
-                if ('usado' in scope[ctx.expression(1).getText()] and scope[ctx.expression(1).getText()]['usado'] == True):
-                    temp = self.new_temp()
-
-                    self.add_to_cuadruplos(('mul', temp, left, right))
-
-                    if self.method_name:
-                        target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
-                    else:
-                        target_code = self.code[self.class_name]
-
-                    target_code.append(f"{temp} = {left} + {right}")
-                    return temp
+        target_code.append(f"{temp} = {left} * {right}")
+        return temp
 
     def visitDivisionExpression(self, ctx: yaplParser.DivisionExpressionContext):
         print("visitDivisionExpression")
         print(ctx.getText())
-        self.action = "operation"
         left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
-        self.action = ""
-        # print(left, right)
-        for scope in self.listener.symbol_table.scopes:
-            if ctx.expression(0).getText() in scope:
-                if ('usado' in scope[ctx.expression(0).getText()] and scope[ctx.expression(0).getText()]['usado'] == True):
-                    temp = self.new_temp()
+        temp = self.new_temp()
 
-                    self.add_to_cuadruplos(('div', temp, left, right))
+        self.cuadruplos.append(('/', left, right, temp))
+        self.add_to_mips(('/', left, right, temp))
 
-                    if self.method_name:
-                        target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
-                    else:
-                        target_code = self.code[self.class_name]
+        if self.method_name:
+            target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
+        else:
+            target_code = self.code[self.class_name]
 
-                    target_code.append(f"{temp} = {left} + {right}")
-                    return temp
-            elif ctx.expression(1).getText() in scope:
-                if ('usado' in scope[ctx.expression(1).getText()] and scope[ctx.expression(1).getText()]['usado'] == True):
-                    temp = self.new_temp()
-
-                    self.add_to_cuadruplos(('div', temp, left, right))
-
-                    if self.method_name:
-                        target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
-                    else:
-                        target_code = self.code[self.class_name]
-
-                    target_code.append(f"{temp} = {left} + {right}")
-                    return temp
+        target_code.append(f"{temp} = {left} / {right}")
+        return temp
 
     def visitNewExpression(self, ctx: yaplParser.NewExpressionContext):
         print("visitNewExpression")
-        self.is_new = True
-        # self.add_to_cuadruplos(('new', ctx.TYPE_ID().getText(), '-', '-'))
+        self.cuadruplos.append(('new', ctx.TYPE_ID().getText(), '-', '-'))
+        # self.add_to_mips(('new', ctx.TYPE_ID().getText(), '-', '-'))
 
     def visitIfStatement(self, ctx: yaplParser.IfStatementContext):
         print("visitIfStatement")
@@ -1275,18 +1237,20 @@ class MyVisitor(yaplVisitor):
         # target_code.append(f"{temp} = {condition_temp}")
         target_code.append(
             f"if_false {condition_temp} goto {else_block_label}")
-        # self.add_to_cuadruplos(
-        #     ('<-', ctx.expression().getText(), '-', condition_temp))
-        self.add_to_cuadruplos(
-            ('blez', condition_temp, else_block_label))
+        self.cuadruplos.append(
+            ('<-', ctx.expression().getText(), '-', condition_temp))
+        self.add_to_mips(
+            ('<-', ctx.expression().getText(), '-', condition_temp))
+        self.cuadruplos.append(
+            ('if_false', condition_temp, '-', else_block_label))
+        self.add_to_mips(
+            ('if_false', condition_temp, '-', else_block_label))
         self.visit(ctx.statement(0))
         target_code.append(f"goto {end_label}")
         target_code.append(f"{else_block_label}:")
-        self.add_to_cuadruplos((f"{else_block_label}:", ""))
         if ctx.statement(1):  # En caso de que exista un bloque else
             self.visit(ctx.statement(1))
         target_code.append(f"{end_label}")
-        self.add_to_cuadruplos((f"{end_label}:", ""))
 
     def visitExpressionStatement(self, ctx: yaplParser.ExpressionStatementContext):
         print("visitExpressionStatement")
@@ -1300,7 +1264,8 @@ class MyVisitor(yaplVisitor):
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
         temp = self.new_temp()
 
-        self.add_to_cuadruplos(('>', left, right, '-'))
+        self.cuadruplos.append(('>', left, right, '-'))
+        self.add_to_mips(('>', left, right, '-'))
 
         if self.method_name:
             target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
@@ -1317,7 +1282,8 @@ class MyVisitor(yaplVisitor):
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
         temp = self.new_temp()
 
-        self.add_to_cuadruplos(('slt', temp, left, right))
+        self.cuadruplos.append(('<', left, right, '-'))
+        self.add_to_mips(('<', left, right, '-'))
 
         if self.method_name:
             target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
@@ -1334,7 +1300,8 @@ class MyVisitor(yaplVisitor):
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
         temp = self.new_temp()
 
-        self.add_to_cuadruplos(('==', left, right, '-'))
+        self.cuadruplos.append(('==', left, right, '-'))
+        self.add_to_mips(('==', left, right, '-'))
 
         if self.method_name:
             target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
@@ -1351,7 +1318,8 @@ class MyVisitor(yaplVisitor):
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
         temp = self.new_temp()
 
-        self.add_to_cuadruplos(('!=', left, right, '-'))
+        self.cuadruplos.append(('!=', left, right, '-'))
+        self.add_to_mips(('!=', left, right, '-'))
 
         if self.method_name:
             target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
@@ -1367,18 +1335,7 @@ class MyVisitor(yaplVisitor):
         self.action = "assignment"
         left = self.visit(ctx.expression(0)) or ctx.expression(0).getText()
         right = self.visit(ctx.expression(1)) or ctx.expression(1).getText()
-        temp = self.new_temp()
         print(left, right)
-
-        # self.add_to_cuadruplos(('=', left, '-', right))
-        if right.isnumeric():
-            self.add_to_cuadruplos(('li', temp, right))
-            self.add_to_cuadruplos(('sw', temp, left))
-        else:
-            if right == "$v0":
-                self.cuadruplos.pop(-2)
-            # else:
-            self.add_to_cuadruplos(('sw', right, left))
 
         if self.method_name:
             target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
@@ -1386,6 +1343,20 @@ class MyVisitor(yaplVisitor):
             target_code = self.code[self.class_name]
 
         target_code.append(f"{left} = {right}")
+        self.cuadruplos.append(('<-', right, '-', left))
+
+        for scope in self.listener.symbol_table.scopes:
+            if left in scope:
+                if 'usado' in scope[left] and scope[left]['usado'] == True:
+                    # if left in self.temps:
+                    #     temp = self.temps[left]
+                    #     self.add_to_mips(('lw', temp, left))
+                    break
+                else:
+                    temp = self.lookup_temp(left) or self.new_temp()
+                    self.temps[left] = temp
+                    self.add_to_mips(('li', temp, left))
+                    self.add_to_mips(('sw', temp, right))
 
     def visitVariableDeclaration(self, ctx: yaplParser.VariableDeclarationContext):
         print("visitVariableDeclaration")
@@ -1393,9 +1364,6 @@ class MyVisitor(yaplVisitor):
         var_name = ctx.ID().getText()
         print(var_name)
         expression_result = ctx.type_().getText()
-
-        temp = self.new_temp()
-
         if self.method_name:
             target_code = self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"]
         else:
@@ -1404,8 +1372,10 @@ class MyVisitor(yaplVisitor):
         if ctx.statement():
             target_code.append(
                 f"{var_name} = {expression_result}")
-            self.add_to_cuadruplos(
-                ('lw', temp, var_name))
+            self.cuadruplos.append(
+                ('ASSIGN', expression_result, '-', var_name))
+            self.add_to_mips(
+                ('ASSIGN1', expression_result, '-', var_name))
             if re.search(r'[\+\-\*\/]', ctx.statement().getText()) or re.search(r'[(]', ctx.statement().getText()):
                 self.call = True
                 res = self.visit(ctx.statement())
@@ -1413,18 +1383,25 @@ class MyVisitor(yaplVisitor):
                 res = ctx.statement().getText()
             target_code.append(
                 f"{var_name} = {res}")
-            self.add_to_cuadruplos(
-                ('li', var_name, res))
+            self.cuadruplos.append(
+                ('<-', var_name, '-', res))
+            self.add_to_mips(
+                ('<-', var_name, '-', res))
         else:
             target_code.append(
                 f"{var_name} = {expression_result}")
+            self.cuadruplos.append(
+                ('ASSIGN', expression_result, '-', var_name))
+
             for scope in self.listener.symbol_table.scopes:
                 if var_name in scope:
                     if 'usado' in scope[var_name] and scope[var_name]['usado'] == True:
-                        # temp = self.new_temp()
-                        self.add_to_cuadruplos(
-                            ('lw', temp, var_name))
+                        break
+                    else:
+                        temp = self.lookup_temp(var_name) or self.new_temp()
                         self.temps[var_name] = temp
+                        self.add_to_mips(
+                            ('lw', temp, var_name))
         var_size = self.get_size_of_type(ctx.type_().getText())
         self.update_mem_for_variable(var_size)
 
@@ -1439,21 +1416,25 @@ class MyVisitor(yaplVisitor):
                 # print(expression)
                 self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
                     f"return {expression}")
-                self.add_to_cuadruplos(('li', '$v0', expression))
+                self.cuadruplos.append(('return', '-', '-',  expression))
+                self.add_to_mips(('return', '-', '-',  expression))
             else:
                 self.code[self.class_name][-1][f"{self.class_name}.{self.method_name}:"].append(
                     f"return")
-                self.add_to_cuadruplos(('return', '-', '-', '-'))
+                self.cuadruplos.append(('return', '-', '-', '-'))
+                self.add_to_mips(('return', '-', '-', '-'))
         else:
             if ctx.expression():
                 expression = ctx.expression().getText()
                 print(expression)
                 self.code[self.class_name].append(f"return {expression}")
-                self.add_to_cuadruplos(('li', '$v0', expression))
+                self.cuadruplos.append(('return', '-', '-', expression))
+                self.add_to_mips(('return', '-', '-', expression))
             else:
                 self.code[self.class_name].append(
                     f"return {ctx.VOID().getText()}")
-                self.add_to_cuadruplos(('return', '-', '-', '-'))
+                self.cuadruplos.append(('return', '-', '-', '-'))
+                self.add_to_mips(('return', '-', '-', '-'))
 
     def visitWhileStatement(self, ctx: yaplParser.WhileStatementContext):
         print("visitWhileStatement")
@@ -1472,9 +1453,12 @@ class MyVisitor(yaplVisitor):
             ctx.expression()) or ctx.expression().getText()
         # target_code.append(f"{condition_temp} = {ctx.expression().getText()}")
         target_code.append(f"if_false {condition_temp} goto {end_label}")
-        self.add_to_cuadruplos(
+        self.cuadruplos.append(
             ('<-', ctx.expression().getText(), '-', condition_temp))
-        self.add_to_cuadruplos(('if_false', condition_temp, '-', end_label))
+        self.add_to_mips(
+            ('<-', ctx.expression().getText(), '-', condition_temp))
+        self.cuadruplos.append(('if_false', condition_temp, '-', end_label))
+        self.add_to_mips(('if_false', condition_temp, '-', end_label))
         self.visit(ctx.statement())
         target_code.append(f"goto {while_label}")
         target_code.append(f"{end_label}")
@@ -1492,21 +1476,32 @@ class MyVisitor(yaplVisitor):
         if ctx.expressionList():
             for expression in ctx.expressionList().expression():
                 temp = self.new_temp()
-                self.add_to_cuadruplos(
+                self.cuadruplos.append(
                     ('PARAM', expression.getText(), '-', temp))
+                # self.add_to_mips(
+                #     ('PARAM', expression.getText(), '-', temp))
                 target_code.append(
                     f"{temp} = {expression.getText()}")
                 target_code.append(
                     f"PUSHPARAM {temp}")
-                self.add_to_cuadruplos(
+                self.cuadruplos.append(
                     ('PUSHPARAM', temp, '-', '-'))
-            # self.add_to_cuadruplos(('CALL', method_name, '-', '-'))
+                # self.add_to_mips(
+                #     ('PUSHPARAM', temp, '-', '-'))
+            self.cuadruplos.append(('CALL', method_name, '-', '-'))
+            # self.add_to_mips(('CALL', method_name, '-', '-'))
 
-        # temp = self.new_temp()
-        temp = "$v0"
+        temp = self.new_temp()
         target_code.append(
             f"{temp} = LCALL {class_name}.{method_name}()")
-        self.add_to_cuadruplos(('jal', method_name))
+        self.cuadruplos.append(('CALL', method_name, '-', '-'))
+        if method_name == 'out_int':
+            self.add_to_mips(('',))
+            self.add_to_mips(('li', '$a0', expression.getText()))
+            self.add_to_mips(('li', '$v0', '1'))
+            self.add_to_mips(('syscall',))
+        else:
+            self.add_to_mips(('CALL', method_name, '-', '-'))
 
         return temp
 
@@ -1515,21 +1510,34 @@ class MyVisitor(yaplVisitor):
         print(ctx.getText())
         print("op", self.action)
         si_se_usa = False
+        # temp = self.lookup_temp(ctx.getText())
         if ctx.getText() in self.temps:
+            # print('tiene temp')
             if self.action == "assignment":
                 return ctx.getText()
-            temp = self.temps[ctx.getText()]
-        else:
-            temp = self.new_temp()
+            elif self.action == "operation":
+                return self.temps[ctx.getText()]
+        # ver de reescribir los parametros con lo de los args cuando se definan los args
+        elif ctx.getText() in self.params:
+            for scope in self.listener.symbol_table.scopes:
+                if ctx.getText() in scope:
+                    print(self.args)
+                    if scope[ctx.getText()]['valor'] in self.args:
+                        return self.args[scope[ctx.getText()]['valor']]
 
-        for scope in self.listener.symbol_table.scopes:
-            if ctx.getText() in scope:
-                if ('usado' in scope[ctx.getText()] and scope[ctx.getText()]['usado'] == True):
-                    si_se_usa = True
-        if self.action == "operation" and si_se_usa:
-            self.add_to_cuadruplos(('lw', temp, ctx.ID().getText()))
+        #     temp = self.temps[ctx.getText()]
+        # else:
+        #     temp = self.new_temp()
+        #     self.temps[ctx.getText()] = temp
 
-        return temp
+        # for scope in self.listener.symbol_table.scopes:
+        #     if ctx.getText() in scope:
+        #         if ('usado' in scope[ctx.getText()] and scope[ctx.getText()]['usado'] == True):
+        #             si_se_usa = True
+        # if self.action == "operation" and si_se_usa:
+        #     self.add_to_mips(('lw', temp, ctx.ID().getText()))
+
+        # return temp
 
     def get_size_of_type(self, type_str):
         """Devuelve el tamaño en bytes del tipo de datos proporcionado. Esto es solo un ejemplo y debe ser ajustado según el lenguaje y la plataforma."""
@@ -1548,7 +1556,7 @@ def write_mips_code(listener, visitor, mem_sizes):
         for k2, v2 in v.items():
             if 'usado' in v2 and v2['usado'] == True:
                 if v2['tipo'] == 'int':
-                    if 'valor' in v2:
+                    if 'valor' in v2 and v2['valor'] != k2:
                         f.write(f"{k2}: .word {v2['valor']}\n")
                     else:
                         f.write(f"{k2}: .word 0\n")
@@ -1558,7 +1566,7 @@ def write_mips_code(listener, visitor, mem_sizes):
                     f.write(f"{k2}: .byte 0\n")
     f.write('\n.text\n')
     f.write('.globl main\n\n')
-    for cuadruplo in visitor.cuadruplos:
+    for cuadruplo in visitor.mips:
         # Convertir el cuadruplo a una lista y eliminar los elementos vacíos
         line_elements = [element for element in cuadruplo]
         # print(line_elements, len(line_elements))
@@ -1636,11 +1644,8 @@ class AnalyzeCodeViewSet(viewsets.ViewSet):
             else:
                 # tree_str = tree.toStringTree(recog=parser)
                 # tree = parse_tree(tree_str)
-                # return Response({'tree': tree_str, 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
-                # return Response({'message': 'CODIGO ANALIZADO CSORRECTAMENTE!', 'symbol_table': my_listener.symbol_table.scopes}, status=status.HTTP_200_OK)
                 write_mips_code(my_listener, myVisitor, myVisitor.mem_sizes)
-                return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'symbol_table': my_listener.symbol_table.scopes, 'Codigo3Direcciones': myVisitor.code, 'Cuadruplos': myVisitor.cuadruplos, 'sizes': myVisitor.mem_sizes, 'temps': myVisitor.temps}, status=status.HTTP_200_OK)
-                # return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'Codigo3Direcciones': myVisitor.code}, status=status.HTTP_200_OK)
+                return Response({'message': 'CODIGO ANALIZADO CORRECTAMENTE!', 'symbol_table': my_listener.symbol_table.scopes, 'Codigo3Direcciones': myVisitor.code, 'Cuadruplos': myVisitor.cuadruplos, 'sizes': myVisitor.mem_sizes, 'temps': myVisitor.temps, 'mips': myVisitor.mips, 'args': myVisitor.args}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

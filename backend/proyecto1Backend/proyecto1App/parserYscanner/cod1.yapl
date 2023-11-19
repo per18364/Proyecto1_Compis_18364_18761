@@ -1,5 +1,4 @@
-class Main inherits IO{
-    --int eyes;
+class Main inherits IO {
     void simpleFn(int z) {
         int x;
         int y;
@@ -10,6 +9,9 @@ class Main inherits IO{
     }
 
     void main() {
-        simpleFn(137);
+        int numero;
+        numero <- 137;
+        simpleFn(numero);
+        
     }
 }

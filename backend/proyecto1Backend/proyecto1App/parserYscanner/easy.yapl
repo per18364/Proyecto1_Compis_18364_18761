@@ -1,0 +1,22 @@
+
+class Main Inherits IO {
+    boolValue : Bool;
+    intValue : Int;
+    add : Int;
+
+    main: Object;
+    main() : Object {
+        {
+            let x: Int <- 5 in x
+            let z: Int <- 0 in z
+            let y: Int <- 0 in y
+            IO.print("ingrese el 1er numero \n")
+            IO.input_int(x)
+            IO.print("ingrese el 2do numero \n")
+            IO.input_int(y)
+            IO.print("ingrese el 3 numero \n")
+            z <- x + y
+            IO.print(x)
+        }
+    };
+}

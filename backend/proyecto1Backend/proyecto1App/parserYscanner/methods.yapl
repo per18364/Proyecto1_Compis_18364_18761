@@ -1,0 +1,32 @@
+class Main Inherits IO {
+    boolValue : Bool;
+    intValue : Int;
+    add : Int;
+
+    main: Object;
+    main() : Object {
+        {
+
+            let x: Int <- 5 in x
+            let z: Int <- 0 in z
+            let y: Int <- 0 in y
+            IO.print("ingrese el 1er numero")
+            IO.input_int(x)
+            IO.print("ingrese el 2do numero")
+            IO.input_int(y)
+            IO.print("ingrese el 3 numero")
+            IO.input_int(z)
+            let vacia : Int in vacia
+            let math: Int <- new MathOperations IN math;
+            vacia <- math.add(x,y,z);
+            IO.print(vacia)
+        }
+    };
+};
+
+class MathOperations {
+    add : Int;
+    add(a: Int, b: Int): Int {
+        a + b * c
+    }
+}

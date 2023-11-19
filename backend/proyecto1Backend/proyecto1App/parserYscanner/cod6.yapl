@@ -1,0 +1,16 @@
+class A inherits IO {
+
+}
+
+class B inherits A {
+
+}
+
+class Main {
+    void main() {
+        B herencia;
+        herencia <- new B;
+        herencia.out_int(1);
+    }
+}
+

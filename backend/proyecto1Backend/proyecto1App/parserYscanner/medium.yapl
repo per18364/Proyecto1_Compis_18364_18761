@@ -1,0 +1,20 @@
+class Main Inherits IO {
+    boolValue : Bool;
+    intValue : Int;
+    add : Int;
+
+    main: Object;
+    main() : Object {
+        {
+            let x: Int <- 15 in x
+            let y: Int <- 10 in y
+            let z: Int <- 10 in z
+
+            if z = y then IO.print("equals") ELSE IO.print("not equals") fi;
+            z <- z + 1
+            IO.print(z)
+            if y = x then IO.print("equals") ELSE IO.print("not equals") fi;
+            
+        }
+    };
+}
