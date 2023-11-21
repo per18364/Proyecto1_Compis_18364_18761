@@ -1,0 +1,16 @@
+class Main inherits IO{
+
+    int factorial(int n) {
+        if (n <= 1) {
+            return 1;
+        } else {
+            return n * factorial(n - 1);
+        }
+    }
+
+    void main() {
+        int x;
+        x <- factorial(4);
+        out_int(x);
+    }
+}

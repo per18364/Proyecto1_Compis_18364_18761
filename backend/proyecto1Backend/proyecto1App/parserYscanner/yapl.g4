@@ -114,6 +114,7 @@ expression:
 	| expression AND expression							# andExpression
 	| expression OR expression							# orExpression
 	| expression DOT ID LPAREN expressionList? RPAREN	# classMethodCallExpression
+	| expression LPAREN expressionList? RPAREN			# methodCallExpression
 	| NEW TYPE_ID										# newExpression
 	| NOT expression									# notExpression
 	| MINUS expression									# unaryMinusExpression

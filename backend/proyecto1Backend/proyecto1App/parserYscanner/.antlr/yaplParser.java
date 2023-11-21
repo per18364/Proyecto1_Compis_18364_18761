@@ -1379,6 +1379,183 @@ public class yaplParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
+	public static class AdditionExpressionContext extends ExpressionContext {
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode PLUS() { return getToken(yaplParser.PLUS, 0); }
+		public AdditionExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterAdditionExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAdditionExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class IdentifierExpressionContext extends ExpressionContext {
+		public TerminalNode ID() { return getToken(yaplParser.ID, 0); }
+		public IdentifierExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterIdentifierExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitIdentifierExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class MethodCallExpressionContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public TerminalNode LPAREN() { return getToken(yaplParser.LPAREN, 0); }
+		public TerminalNode RPAREN() { return getToken(yaplParser.RPAREN, 0); }
+		public ExpressionListContext expressionList() {
+			return getRuleContext(ExpressionListContext.class,0);
+		}
+		public MethodCallExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterMethodCallExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitMethodCallExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class NotExpressionContext extends ExpressionContext {
+		public TerminalNode NOT() { return getToken(yaplParser.NOT, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public NotExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterNotExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitNotExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class SelfLiteralExpressionContext extends ExpressionContext {
+		public TerminalNode SELF() { return getToken(yaplParser.SELF, 0); }
+		public SelfLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterSelfLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitSelfLiteralExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class GreaterThanExpressionContext extends ExpressionContext {
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode GT() { return getToken(yaplParser.GT, 0); }
+		public GreaterThanExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterGreaterThanExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitGreaterThanExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class AndExpressionContext extends ExpressionContext {
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode AND() { return getToken(yaplParser.AND, 0); }
+		public AndExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterAndExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAndExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class TrueLiteralExpressionContext extends ExpressionContext {
+		public TerminalNode TRUE() { return getToken(yaplParser.TRUE, 0); }
+		public TrueLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterTrueLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitTrueLiteralExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class IntegerLiteralExpressionContext extends ExpressionContext {
+		public TerminalNode INTEGER() { return getToken(yaplParser.INTEGER, 0); }
+		public IntegerLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterIntegerLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitIntegerLiteralExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class VoidLiteralExpressionContext extends ExpressionContext {
+		public TerminalNode VOID() { return getToken(yaplParser.VOID, 0); }
+		public VoidLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterVoidLiteralExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitVoidLiteralExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class LessThanExpressionContext extends ExpressionContext {
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode LT() { return getToken(yaplParser.LT, 0); }
+		public LessThanExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterLessThanExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitLessThanExpression(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class ClassMethodCallExpressionContext extends ExpressionContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -1398,25 +1575,6 @@ public class yaplParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitClassMethodCallExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class AdditionExpressionContext extends ExpressionContext {
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode PLUS() { return getToken(yaplParser.PLUS, 0); }
-		public AdditionExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterAdditionExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAdditionExpression(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -1453,19 +1611,6 @@ public class yaplParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class IdentifierExpressionContext extends ExpressionContext {
-		public TerminalNode ID() { return getToken(yaplParser.ID, 0); }
-		public IdentifierExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterIdentifierExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitIdentifierExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class AssignmentExpressionContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -1482,35 +1627,6 @@ public class yaplParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAssignmentExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class NotExpressionContext extends ExpressionContext {
-		public TerminalNode NOT() { return getToken(yaplParser.NOT, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public NotExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterNotExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitNotExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class SelfLiteralExpressionContext extends ExpressionContext {
-		public TerminalNode SELF() { return getToken(yaplParser.SELF, 0); }
-		public SelfLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterSelfLiteralExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitSelfLiteralExpression(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -1549,25 +1665,6 @@ public class yaplParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitNotEqualExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class GreaterThanExpressionContext extends ExpressionContext {
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode GT() { return getToken(yaplParser.GT, 0); }
-		public GreaterThanExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterGreaterThanExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitGreaterThanExpression(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -1638,38 +1735,6 @@ public class yaplParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class AndExpressionContext extends ExpressionContext {
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode AND() { return getToken(yaplParser.AND, 0); }
-		public AndExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterAndExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitAndExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class TrueLiteralExpressionContext extends ExpressionContext {
-		public TerminalNode TRUE() { return getToken(yaplParser.TRUE, 0); }
-		public TrueLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterTrueLiteralExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitTrueLiteralExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class SubtractionExpressionContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -1689,32 +1754,6 @@ public class yaplParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class IntegerLiteralExpressionContext extends ExpressionContext {
-		public TerminalNode INTEGER() { return getToken(yaplParser.INTEGER, 0); }
-		public IntegerLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterIntegerLiteralExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitIntegerLiteralExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class VoidLiteralExpressionContext extends ExpressionContext {
-		public TerminalNode VOID() { return getToken(yaplParser.VOID, 0); }
-		public VoidLiteralExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterVoidLiteralExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitVoidLiteralExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class EqualityExpressionContext extends ExpressionContext {
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -1731,25 +1770,6 @@ public class yaplParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitEqualityExpression(this);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class LessThanExpressionContext extends ExpressionContext {
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode LT() { return getToken(yaplParser.LT, 0); }
-		public LessThanExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).enterLessThanExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof yaplListener ) ((yaplListener)listener).exitLessThanExpression(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -1905,27 +1925,27 @@ public class yaplParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(253);
+			setState(259);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,20,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(251);
+					setState(257);
 					_errHandler.sync(this);
-					switch ( getInterpreter().adaptivePredict(_input,18,_ctx) ) {
+					switch ( getInterpreter().adaptivePredict(_input,19,_ctx) ) {
 					case 1:
 						{
 						_localctx = new MultiplicationExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(204);
-						if (!(precpred(_ctx, 24))) throw new FailedPredicateException(this, "precpred(_ctx, 24)");
+						if (!(precpred(_ctx, 25))) throw new FailedPredicateException(this, "precpred(_ctx, 25)");
 						setState(205);
 						match(MULT);
 						setState(206);
-						expression(25);
+						expression(26);
 						}
 						break;
 					case 2:
@@ -1933,11 +1953,11 @@ public class yaplParser extends Parser {
 						_localctx = new DivisionExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(207);
-						if (!(precpred(_ctx, 23))) throw new FailedPredicateException(this, "precpred(_ctx, 23)");
+						if (!(precpred(_ctx, 24))) throw new FailedPredicateException(this, "precpred(_ctx, 24)");
 						setState(208);
 						match(DIV);
 						setState(209);
-						expression(24);
+						expression(25);
 						}
 						break;
 					case 3:
@@ -1945,11 +1965,11 @@ public class yaplParser extends Parser {
 						_localctx = new AdditionExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(210);
-						if (!(precpred(_ctx, 22))) throw new FailedPredicateException(this, "precpred(_ctx, 22)");
+						if (!(precpred(_ctx, 23))) throw new FailedPredicateException(this, "precpred(_ctx, 23)");
 						setState(211);
 						match(PLUS);
 						setState(212);
-						expression(23);
+						expression(24);
 						}
 						break;
 					case 4:
@@ -1957,11 +1977,11 @@ public class yaplParser extends Parser {
 						_localctx = new SubtractionExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(213);
-						if (!(precpred(_ctx, 21))) throw new FailedPredicateException(this, "precpred(_ctx, 21)");
+						if (!(precpred(_ctx, 22))) throw new FailedPredicateException(this, "precpred(_ctx, 22)");
 						setState(214);
 						match(MINUS);
 						setState(215);
-						expression(22);
+						expression(23);
 						}
 						break;
 					case 5:
@@ -1969,11 +1989,11 @@ public class yaplParser extends Parser {
 						_localctx = new EqualityExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(216);
-						if (!(precpred(_ctx, 20))) throw new FailedPredicateException(this, "precpred(_ctx, 20)");
+						if (!(precpred(_ctx, 21))) throw new FailedPredicateException(this, "precpred(_ctx, 21)");
 						setState(217);
 						match(EQ);
 						setState(218);
-						expression(21);
+						expression(22);
 						}
 						break;
 					case 6:
@@ -1981,11 +2001,11 @@ public class yaplParser extends Parser {
 						_localctx = new LessThanExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(219);
-						if (!(precpred(_ctx, 19))) throw new FailedPredicateException(this, "precpred(_ctx, 19)");
+						if (!(precpred(_ctx, 20))) throw new FailedPredicateException(this, "precpred(_ctx, 20)");
 						setState(220);
 						match(LT);
 						setState(221);
-						expression(20);
+						expression(21);
 						}
 						break;
 					case 7:
@@ -1993,11 +2013,11 @@ public class yaplParser extends Parser {
 						_localctx = new GreaterThanExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(222);
-						if (!(precpred(_ctx, 18))) throw new FailedPredicateException(this, "precpred(_ctx, 18)");
+						if (!(precpred(_ctx, 19))) throw new FailedPredicateException(this, "precpred(_ctx, 19)");
 						setState(223);
 						match(GT);
 						setState(224);
-						expression(19);
+						expression(20);
 						}
 						break;
 					case 8:
@@ -2005,11 +2025,11 @@ public class yaplParser extends Parser {
 						_localctx = new LessThanOrEqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(225);
-						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
+						if (!(precpred(_ctx, 18))) throw new FailedPredicateException(this, "precpred(_ctx, 18)");
 						setState(226);
 						match(LT_EQ);
 						setState(227);
-						expression(18);
+						expression(19);
 						}
 						break;
 					case 9:
@@ -2017,11 +2037,11 @@ public class yaplParser extends Parser {
 						_localctx = new GreaterThanOrEqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(228);
-						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
+						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
 						setState(229);
 						match(GT_EQ);
 						setState(230);
-						expression(17);
+						expression(18);
 						}
 						break;
 					case 10:
@@ -2029,11 +2049,11 @@ public class yaplParser extends Parser {
 						_localctx = new NotEqualExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(231);
-						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
+						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
 						setState(232);
 						match(NEQ);
 						setState(233);
-						expression(16);
+						expression(17);
 						}
 						break;
 					case 11:
@@ -2041,11 +2061,11 @@ public class yaplParser extends Parser {
 						_localctx = new AndExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(234);
-						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
+						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
 						setState(235);
 						match(AND);
 						setState(236);
-						expression(15);
+						expression(16);
 						}
 						break;
 					case 12:
@@ -2053,11 +2073,11 @@ public class yaplParser extends Parser {
 						_localctx = new OrExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(237);
-						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
+						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
 						setState(238);
 						match(OR);
 						setState(239);
-						expression(14);
+						expression(15);
 						}
 						break;
 					case 13:
@@ -2077,7 +2097,7 @@ public class yaplParser extends Parser {
 						_localctx = new ClassMethodCallExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(243);
-						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
+						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
 						setState(244);
 						match(DOT);
 						setState(245);
@@ -2098,12 +2118,34 @@ public class yaplParser extends Parser {
 						match(RPAREN);
 						}
 						break;
+					case 15:
+						{
+						_localctx = new MethodCallExpressionContext(new ExpressionContext(_parentctx, _parentState));
+						pushNewRecursionContext(_localctx, _startState, RULE_expression);
+						setState(251);
+						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
+						setState(252);
+						match(LPAREN);
+						setState(254);
+						_errHandler.sync(this);
+						_la = _input.LA(1);
+						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 115491825779712L) != 0)) {
+							{
+							setState(253);
+							expressionList();
+							}
+						}
+
+						setState(256);
+						match(RPAREN);
+						}
+						break;
 					}
 					} 
 				}
-				setState(255);
+				setState(261);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,20,_ctx);
 			}
 			}
 		}
@@ -2128,39 +2170,41 @@ public class yaplParser extends Parser {
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 24);
+			return precpred(_ctx, 25);
 		case 1:
-			return precpred(_ctx, 23);
+			return precpred(_ctx, 24);
 		case 2:
-			return precpred(_ctx, 22);
+			return precpred(_ctx, 23);
 		case 3:
-			return precpred(_ctx, 21);
+			return precpred(_ctx, 22);
 		case 4:
-			return precpred(_ctx, 20);
+			return precpred(_ctx, 21);
 		case 5:
-			return precpred(_ctx, 19);
+			return precpred(_ctx, 20);
 		case 6:
-			return precpred(_ctx, 18);
+			return precpred(_ctx, 19);
 		case 7:
-			return precpred(_ctx, 17);
+			return precpred(_ctx, 18);
 		case 8:
-			return precpred(_ctx, 16);
+			return precpred(_ctx, 17);
 		case 9:
-			return precpred(_ctx, 15);
+			return precpred(_ctx, 16);
 		case 10:
-			return precpred(_ctx, 14);
+			return precpred(_ctx, 15);
 		case 11:
-			return precpred(_ctx, 13);
+			return precpred(_ctx, 14);
 		case 12:
 			return precpred(_ctx, 8);
 		case 13:
+			return precpred(_ctx, 13);
+		case 14:
 			return precpred(_ctx, 12);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u00010\u0101\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u00010\u0107\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
@@ -2198,10 +2242,11 @@ public class yaplParser extends Parser {
 		"\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013"+
 		"\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013"+
 		"\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013\u0001\u0013"+
-		"\u0001\u0013\u0001\u0013\u0003\u0013\u00f9\b\u0013\u0001\u0013\u0005\u0013"+
-		"\u00fc\b\u0013\n\u0013\f\u0013\u00ff\t\u0013\u0001\u0013\u0000\u0001&"+
+		"\u0001\u0013\u0001\u0013\u0003\u0013\u00f9\b\u0013\u0001\u0013\u0001\u0013"+
+		"\u0001\u0013\u0001\u0013\u0003\u0013\u00ff\b\u0013\u0001\u0013\u0005\u0013"+
+		"\u0102\b\u0013\n\u0013\f\u0013\u0105\t\u0013\u0001\u0013\u0000\u0001&"+
 		"\u0014\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016\u0018"+
-		"\u001a\u001c\u001e \"$&\u0000\u0001\u0003\u0000\u001c\u001c%(,,\u011c"+
+		"\u001a\u001c\u001e \"$&\u0000\u0001\u0003\u0000\u001c\u001c%(,,\u0124"+
 		"\u0000+\u0001\u0000\u0000\u0000\u00020\u0001\u0000\u0000\u0000\u0004@"+
 		"\u0001\u0000\u0000\u0000\u0006C\u0001\u0000\u0000\u0000\bG\u0001\u0000"+
 		"\u0000\u0000\nL\u0001\u0000\u0000\u0000\fN\u0001\u0000\u0000\u0000\u000e"+
@@ -2290,40 +2335,44 @@ public class yaplParser extends Parser {
 		"\u0000\u0000\u00ca\u00c3\u0001\u0000\u0000\u0000\u00ca\u00c4\u0001\u0000"+
 		"\u0000\u0000\u00ca\u00c5\u0001\u0000\u0000\u0000\u00ca\u00c6\u0001\u0000"+
 		"\u0000\u0000\u00ca\u00c7\u0001\u0000\u0000\u0000\u00ca\u00c8\u0001\u0000"+
-		"\u0000\u0000\u00ca\u00c9\u0001\u0000\u0000\u0000\u00cb\u00fd\u0001\u0000"+
-		"\u0000\u0000\u00cc\u00cd\n\u0018\u0000\u0000\u00cd\u00ce\u0005\u000b\u0000"+
-		"\u0000\u00ce\u00fc\u0003&\u0013\u0019\u00cf\u00d0\n\u0017\u0000\u0000"+
-		"\u00d0\u00d1\u0005\f\u0000\u0000\u00d1\u00fc\u0003&\u0013\u0018\u00d2"+
-		"\u00d3\n\u0016\u0000\u0000\u00d3\u00d4\u0005\t\u0000\u0000\u00d4\u00fc"+
-		"\u0003&\u0013\u0017\u00d5\u00d6\n\u0015\u0000\u0000\u00d6\u00d7\u0005"+
-		"\n\u0000\u0000\u00d7\u00fc\u0003&\u0013\u0016\u00d8\u00d9\n\u0014\u0000"+
-		"\u0000\u00d9\u00da\u0005\r\u0000\u0000\u00da\u00fc\u0003&\u0013\u0015"+
-		"\u00db\u00dc\n\u0013\u0000\u0000\u00dc\u00dd\u0005\u000f\u0000\u0000\u00dd"+
-		"\u00fc\u0003&\u0013\u0014\u00de\u00df\n\u0012\u0000\u0000\u00df\u00e0"+
-		"\u0005\u0010\u0000\u0000\u00e0\u00fc\u0003&\u0013\u0013\u00e1\u00e2\n"+
-		"\u0011\u0000\u0000\u00e2\u00e3\u0005\u0012\u0000\u0000\u00e3\u00fc\u0003"+
-		"&\u0013\u0012\u00e4\u00e5\n\u0010\u0000\u0000\u00e5\u00e6\u0005\u0011"+
-		"\u0000\u0000\u00e6\u00fc\u0003&\u0013\u0011\u00e7\u00e8\n\u000f\u0000"+
-		"\u0000\u00e8\u00e9\u0005\u000e\u0000\u0000\u00e9\u00fc\u0003&\u0013\u0010"+
-		"\u00ea\u00eb\n\u000e\u0000\u0000\u00eb\u00ec\u0005\u0013\u0000\u0000\u00ec"+
-		"\u00fc\u0003&\u0013\u000f\u00ed\u00ee\n\r\u0000\u0000\u00ee\u00ef\u0005"+
-		"\u0014\u0000\u0000\u00ef\u00fc\u0003&\u0013\u000e\u00f0\u00f1\n\b\u0000"+
-		"\u0000\u00f1\u00f2\u0005\b\u0000\u0000\u00f2\u00fc\u0003&\u0013\t\u00f3"+
-		"\u00f4\n\f\u0000\u0000\u00f4\u00f5\u0005\u0017\u0000\u0000\u00f5\u00f6"+
-		"\u0005+\u0000\u0000\u00f6\u00f8\u0005\u0003\u0000\u0000\u00f7\u00f9\u0003"+
-		"\"\u0011\u0000\u00f8\u00f7\u0001\u0000\u0000\u0000\u00f8\u00f9\u0001\u0000"+
-		"\u0000\u0000\u00f9\u00fa\u0001\u0000\u0000\u0000\u00fa\u00fc\u0005\u0004"+
-		"\u0000\u0000\u00fb\u00cc\u0001\u0000\u0000\u0000\u00fb\u00cf\u0001\u0000"+
-		"\u0000\u0000\u00fb\u00d2\u0001\u0000\u0000\u0000\u00fb\u00d5\u0001\u0000"+
-		"\u0000\u0000\u00fb\u00d8\u0001\u0000\u0000\u0000\u00fb\u00db\u0001\u0000"+
-		"\u0000\u0000\u00fb\u00de\u0001\u0000\u0000\u0000\u00fb\u00e1\u0001\u0000"+
-		"\u0000\u0000\u00fb\u00e4\u0001\u0000\u0000\u0000\u00fb\u00e7\u0001\u0000"+
-		"\u0000\u0000\u00fb\u00ea\u0001\u0000\u0000\u0000\u00fb\u00ed\u0001\u0000"+
-		"\u0000\u0000\u00fb\u00f0\u0001\u0000\u0000\u0000\u00fb\u00f3\u0001\u0000"+
-		"\u0000\u0000\u00fc\u00ff\u0001\u0000\u0000\u0000\u00fd\u00fb\u0001\u0000"+
-		"\u0000\u0000\u00fd\u00fe\u0001\u0000\u0000\u0000\u00fe\'\u0001\u0000\u0000"+
-		"\u0000\u00ff\u00fd\u0001\u0000\u0000\u0000\u0014+4>@R\\jpw~\u0082\u0090"+
-		"\u009d\u00a7\u00b0\u00b7\u00ca\u00f8\u00fb\u00fd";
+		"\u0000\u0000\u00ca\u00c9\u0001\u0000\u0000\u0000\u00cb\u0103\u0001\u0000"+
+		"\u0000\u0000\u00cc\u00cd\n\u0019\u0000\u0000\u00cd\u00ce\u0005\u000b\u0000"+
+		"\u0000\u00ce\u0102\u0003&\u0013\u001a\u00cf\u00d0\n\u0018\u0000\u0000"+
+		"\u00d0\u00d1\u0005\f\u0000\u0000\u00d1\u0102\u0003&\u0013\u0019\u00d2"+
+		"\u00d3\n\u0017\u0000\u0000\u00d3\u00d4\u0005\t\u0000\u0000\u00d4\u0102"+
+		"\u0003&\u0013\u0018\u00d5\u00d6\n\u0016\u0000\u0000\u00d6\u00d7\u0005"+
+		"\n\u0000\u0000\u00d7\u0102\u0003&\u0013\u0017\u00d8\u00d9\n\u0015\u0000"+
+		"\u0000\u00d9\u00da\u0005\r\u0000\u0000\u00da\u0102\u0003&\u0013\u0016"+
+		"\u00db\u00dc\n\u0014\u0000\u0000\u00dc\u00dd\u0005\u000f\u0000\u0000\u00dd"+
+		"\u0102\u0003&\u0013\u0015\u00de\u00df\n\u0013\u0000\u0000\u00df\u00e0"+
+		"\u0005\u0010\u0000\u0000\u00e0\u0102\u0003&\u0013\u0014\u00e1\u00e2\n"+
+		"\u0012\u0000\u0000\u00e2\u00e3\u0005\u0012\u0000\u0000\u00e3\u0102\u0003"+
+		"&\u0013\u0013\u00e4\u00e5\n\u0011\u0000\u0000\u00e5\u00e6\u0005\u0011"+
+		"\u0000\u0000\u00e6\u0102\u0003&\u0013\u0012\u00e7\u00e8\n\u0010\u0000"+
+		"\u0000\u00e8\u00e9\u0005\u000e\u0000\u0000\u00e9\u0102\u0003&\u0013\u0011"+
+		"\u00ea\u00eb\n\u000f\u0000\u0000\u00eb\u00ec\u0005\u0013\u0000\u0000\u00ec"+
+		"\u0102\u0003&\u0013\u0010\u00ed\u00ee\n\u000e\u0000\u0000\u00ee\u00ef"+
+		"\u0005\u0014\u0000\u0000\u00ef\u0102\u0003&\u0013\u000f\u00f0\u00f1\n"+
+		"\b\u0000\u0000\u00f1\u00f2\u0005\b\u0000\u0000\u00f2\u0102\u0003&\u0013"+
+		"\t\u00f3\u00f4\n\r\u0000\u0000\u00f4\u00f5\u0005\u0017\u0000\u0000\u00f5"+
+		"\u00f6\u0005+\u0000\u0000\u00f6\u00f8\u0005\u0003\u0000\u0000\u00f7\u00f9"+
+		"\u0003\"\u0011\u0000\u00f8\u00f7\u0001\u0000\u0000\u0000\u00f8\u00f9\u0001"+
+		"\u0000\u0000\u0000\u00f9\u00fa\u0001\u0000\u0000\u0000\u00fa\u0102\u0005"+
+		"\u0004\u0000\u0000\u00fb\u00fc\n\f\u0000\u0000\u00fc\u00fe\u0005\u0003"+
+		"\u0000\u0000\u00fd\u00ff\u0003\"\u0011\u0000\u00fe\u00fd\u0001\u0000\u0000"+
+		"\u0000\u00fe\u00ff\u0001\u0000\u0000\u0000\u00ff\u0100\u0001\u0000\u0000"+
+		"\u0000\u0100\u0102\u0005\u0004\u0000\u0000\u0101\u00cc\u0001\u0000\u0000"+
+		"\u0000\u0101\u00cf\u0001\u0000\u0000\u0000\u0101\u00d2\u0001\u0000\u0000"+
+		"\u0000\u0101\u00d5\u0001\u0000\u0000\u0000\u0101\u00d8\u0001\u0000\u0000"+
+		"\u0000\u0101\u00db\u0001\u0000\u0000\u0000\u0101\u00de\u0001\u0000\u0000"+
+		"\u0000\u0101\u00e1\u0001\u0000\u0000\u0000\u0101\u00e4\u0001\u0000\u0000"+
+		"\u0000\u0101\u00e7\u0001\u0000\u0000\u0000\u0101\u00ea\u0001\u0000\u0000"+
+		"\u0000\u0101\u00ed\u0001\u0000\u0000\u0000\u0101\u00f0\u0001\u0000\u0000"+
+		"\u0000\u0101\u00f3\u0001\u0000\u0000\u0000\u0101\u00fb\u0001\u0000\u0000"+
+		"\u0000\u0102\u0105\u0001\u0000\u0000\u0000\u0103\u0101\u0001\u0000\u0000"+
+		"\u0000\u0103\u0104\u0001\u0000\u0000\u0000\u0104\'\u0001\u0000\u0000\u0000"+
+		"\u0105\u0103\u0001\u0000\u0000\u0000\u0015+4>@R\\jpw~\u0082\u0090\u009d"+
+		"\u00a7\u00b0\u00b7\u00ca\u00f8\u00fe\u0101\u0103";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

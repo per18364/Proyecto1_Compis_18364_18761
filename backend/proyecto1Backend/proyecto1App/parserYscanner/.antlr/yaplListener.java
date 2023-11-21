@@ -197,18 +197,6 @@ public interface yaplListener extends ParseTreeListener {
 	 */
 	void exitBlock(yaplParser.BlockContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code classMethodCallExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassMethodCallExpression(yaplParser.ClassMethodCallExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code classMethodCallExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassMethodCallExpression(yaplParser.ClassMethodCallExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code additionExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
 	 * @param ctx the parse tree
@@ -220,30 +208,6 @@ public interface yaplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAdditionExpression(yaplParser.AdditionExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lessThanOrEqualExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterLessThanOrEqualExpression(yaplParser.LessThanOrEqualExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lessThanOrEqualExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitLessThanOrEqualExpression(yaplParser.LessThanOrEqualExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code newExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterNewExpression(yaplParser.NewExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code newExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitNewExpression(yaplParser.NewExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code identifierExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
@@ -257,17 +221,17 @@ public interface yaplListener extends ParseTreeListener {
 	 */
 	void exitIdentifierExpression(yaplParser.IdentifierExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code assignmentExpression}
+	 * Enter a parse tree produced by the {@code methodCallExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterAssignmentExpression(yaplParser.AssignmentExpressionContext ctx);
+	void enterMethodCallExpression(yaplParser.MethodCallExpressionContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code assignmentExpression}
+	 * Exit a parse tree produced by the {@code methodCallExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitAssignmentExpression(yaplParser.AssignmentExpressionContext ctx);
+	void exitMethodCallExpression(yaplParser.MethodCallExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code notExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
@@ -293,6 +257,126 @@ public interface yaplListener extends ParseTreeListener {
 	 */
 	void exitSelfLiteralExpression(yaplParser.SelfLiteralExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code greaterThanExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterGreaterThanExpression(yaplParser.GreaterThanExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code greaterThanExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitGreaterThanExpression(yaplParser.GreaterThanExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code andExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAndExpression(yaplParser.AndExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code andExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAndExpression(yaplParser.AndExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code trueLiteralExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterTrueLiteralExpression(yaplParser.TrueLiteralExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code trueLiteralExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitTrueLiteralExpression(yaplParser.TrueLiteralExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code integerLiteralExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterIntegerLiteralExpression(yaplParser.IntegerLiteralExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code integerLiteralExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitIntegerLiteralExpression(yaplParser.IntegerLiteralExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code voidLiteralExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVoidLiteralExpression(yaplParser.VoidLiteralExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code voidLiteralExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVoidLiteralExpression(yaplParser.VoidLiteralExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code lessThanExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterLessThanExpression(yaplParser.LessThanExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lessThanExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitLessThanExpression(yaplParser.LessThanExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code classMethodCallExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassMethodCallExpression(yaplParser.ClassMethodCallExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code classMethodCallExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassMethodCallExpression(yaplParser.ClassMethodCallExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code lessThanOrEqualExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterLessThanOrEqualExpression(yaplParser.LessThanOrEqualExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lessThanOrEqualExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitLessThanOrEqualExpression(yaplParser.LessThanOrEqualExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code newExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterNewExpression(yaplParser.NewExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code newExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitNewExpression(yaplParser.NewExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code assignmentExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignmentExpression(yaplParser.AssignmentExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code assignmentExpression}
+	 * labeled alternative in {@link yaplParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignmentExpression(yaplParser.AssignmentExpressionContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code multiplicationExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
 	 * @param ctx the parse tree
@@ -316,18 +400,6 @@ public interface yaplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNotEqualExpression(yaplParser.NotEqualExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code greaterThanExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterGreaterThanExpression(yaplParser.GreaterThanExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code greaterThanExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitGreaterThanExpression(yaplParser.GreaterThanExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code greaterThanOrEqualExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
@@ -377,30 +449,6 @@ public interface yaplListener extends ParseTreeListener {
 	 */
 	void exitUnaryMinusExpression(yaplParser.UnaryMinusExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code andExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterAndExpression(yaplParser.AndExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code andExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitAndExpression(yaplParser.AndExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code trueLiteralExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterTrueLiteralExpression(yaplParser.TrueLiteralExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code trueLiteralExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitTrueLiteralExpression(yaplParser.TrueLiteralExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code subtractionExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
 	 * @param ctx the parse tree
@@ -413,30 +461,6 @@ public interface yaplListener extends ParseTreeListener {
 	 */
 	void exitSubtractionExpression(yaplParser.SubtractionExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code integerLiteralExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterIntegerLiteralExpression(yaplParser.IntegerLiteralExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code integerLiteralExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitIntegerLiteralExpression(yaplParser.IntegerLiteralExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code voidLiteralExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterVoidLiteralExpression(yaplParser.VoidLiteralExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code voidLiteralExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitVoidLiteralExpression(yaplParser.VoidLiteralExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code equalityExpression}
 	 * labeled alternative in {@link yaplParser#expression}.
 	 * @param ctx the parse tree
@@ -448,18 +472,6 @@ public interface yaplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEqualityExpression(yaplParser.EqualityExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code lessThanExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterLessThanExpression(yaplParser.LessThanExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lessThanExpression}
-	 * labeled alternative in {@link yaplParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitLessThanExpression(yaplParser.LessThanExpressionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code divisionExpression}
 	 * labeled alternative in {@link yaplParser#expression}.

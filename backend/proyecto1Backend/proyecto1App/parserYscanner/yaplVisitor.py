@@ -104,23 +104,8 @@ class yaplVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by yaplParser#classMethodCallExpression.
-    def visitClassMethodCallExpression(self, ctx:yaplParser.ClassMethodCallExpressionContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by yaplParser#additionExpression.
     def visitAdditionExpression(self, ctx:yaplParser.AdditionExpressionContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by yaplParser#lessThanOrEqualExpression.
-    def visitLessThanOrEqualExpression(self, ctx:yaplParser.LessThanOrEqualExpressionContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by yaplParser#newExpression.
-    def visitNewExpression(self, ctx:yaplParser.NewExpressionContext):
         return self.visitChildren(ctx)
 
 
@@ -129,8 +114,8 @@ class yaplVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by yaplParser#assignmentExpression.
-    def visitAssignmentExpression(self, ctx:yaplParser.AssignmentExpressionContext):
+    # Visit a parse tree produced by yaplParser#methodCallExpression.
+    def visitMethodCallExpression(self, ctx:yaplParser.MethodCallExpressionContext):
         return self.visitChildren(ctx)
 
 
@@ -144,6 +129,56 @@ class yaplVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by yaplParser#greaterThanExpression.
+    def visitGreaterThanExpression(self, ctx:yaplParser.GreaterThanExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by yaplParser#andExpression.
+    def visitAndExpression(self, ctx:yaplParser.AndExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by yaplParser#trueLiteralExpression.
+    def visitTrueLiteralExpression(self, ctx:yaplParser.TrueLiteralExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by yaplParser#integerLiteralExpression.
+    def visitIntegerLiteralExpression(self, ctx:yaplParser.IntegerLiteralExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by yaplParser#voidLiteralExpression.
+    def visitVoidLiteralExpression(self, ctx:yaplParser.VoidLiteralExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by yaplParser#lessThanExpression.
+    def visitLessThanExpression(self, ctx:yaplParser.LessThanExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by yaplParser#classMethodCallExpression.
+    def visitClassMethodCallExpression(self, ctx:yaplParser.ClassMethodCallExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by yaplParser#lessThanOrEqualExpression.
+    def visitLessThanOrEqualExpression(self, ctx:yaplParser.LessThanOrEqualExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by yaplParser#newExpression.
+    def visitNewExpression(self, ctx:yaplParser.NewExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by yaplParser#assignmentExpression.
+    def visitAssignmentExpression(self, ctx:yaplParser.AssignmentExpressionContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by yaplParser#multiplicationExpression.
     def visitMultiplicationExpression(self, ctx:yaplParser.MultiplicationExpressionContext):
         return self.visitChildren(ctx)
@@ -151,11 +186,6 @@ class yaplVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by yaplParser#notEqualExpression.
     def visitNotEqualExpression(self, ctx:yaplParser.NotEqualExpressionContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by yaplParser#greaterThanExpression.
-    def visitGreaterThanExpression(self, ctx:yaplParser.GreaterThanExpressionContext):
         return self.visitChildren(ctx)
 
 
@@ -179,38 +209,13 @@ class yaplVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by yaplParser#andExpression.
-    def visitAndExpression(self, ctx:yaplParser.AndExpressionContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by yaplParser#trueLiteralExpression.
-    def visitTrueLiteralExpression(self, ctx:yaplParser.TrueLiteralExpressionContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by yaplParser#subtractionExpression.
     def visitSubtractionExpression(self, ctx:yaplParser.SubtractionExpressionContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by yaplParser#integerLiteralExpression.
-    def visitIntegerLiteralExpression(self, ctx:yaplParser.IntegerLiteralExpressionContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by yaplParser#voidLiteralExpression.
-    def visitVoidLiteralExpression(self, ctx:yaplParser.VoidLiteralExpressionContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by yaplParser#equalityExpression.
     def visitEqualityExpression(self, ctx:yaplParser.EqualityExpressionContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by yaplParser#lessThanExpression.
-    def visitLessThanExpression(self, ctx:yaplParser.LessThanExpressionContext):
         return self.visitChildren(ctx)
 
 
